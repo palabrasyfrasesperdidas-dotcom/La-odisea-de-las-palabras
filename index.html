@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bloque 1: Geometría del Destino | La odisea de las palabras</title>
+    <title>Bloque 1: Geometría del Destino | Archipiélago de Pergamino y Tinta</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #020101;
-            color: #f5f5f5;
+            background-color: #050302;
+            color: #2c221e;
             font-family: 'Amiri', serif;
             overflow: hidden;
             width: 100vw;
@@ -24,7 +24,7 @@
             height: 100%;
             z-index: 1;
         }
-        /* HUD Superior Elegante */
+        /* HUD Superior Elegante - Estilo Pergamino */
         .hud-header {
             position: absolute;
             top: 25px;
@@ -33,19 +33,25 @@
             z-index: 10;
             text-align: center;
             pointer-events: none;
+            background: rgba(244, 235, 215, 0.85);
+            border: 1px solid rgba(90, 60, 30, 0.4);
+            padding: 10px 30px;
+            border-radius: 4px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
         .hud-header h1 {
             font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: #f2e6e6;
-            letter-spacing: 5px;
-            text-shadow: 0 0 20px rgba(255, 40, 40, 0.6);
+            font-size: 1.4rem;
+            color: #3b2613;
+            letter-spacing: 4px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.6);
             font-weight: 600;
         }
         .hud-header p {
-            font-size: 0.9rem;
-            color: #a38888;
-            margin-top: 5px;
+            font-size: 0.85rem;
+            color: #61462a;
+            margin-top: 3px;
             letter-spacing: 2px;
             font-style: italic;
         }
@@ -56,17 +62,18 @@
             top: 25px;
             right: 25px;
             z-index: 10;
-            background: rgba(10, 3, 3, 0.85);
-            border: 1px solid rgba(120, 30, 30, 0.4);
+            background: rgba(244, 235, 215, 0.9);
+            border: 1px solid rgba(90, 60, 30, 0.4);
             padding: 14px 20px;
             border-radius: 4px;
             font-size: 0.9rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
             letter-spacing: 1px;
+            color: #3b2613;
         }
         .hud-progress span {
-            color: #ff4d4d;
+            color: #9c3a16;
             font-weight: bold;
         }
 
@@ -76,21 +83,22 @@
             bottom: 25px;
             left: 25px;
             z-index: 10;
-            background: rgba(10, 3, 3, 0.85);
-            border: 1px solid rgba(80, 20, 20, 0.4);
+            background: rgba(244, 235, 215, 0.9);
+            border: 1px solid rgba(90, 60, 30, 0.4);
             padding: 14px 20px;
             border-radius: 4px;
             font-size: 0.85rem;
-            color: #b89999;
+            color: #4a3421;
             backdrop-filter: blur(8px);
             line-height: 1.5;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* Modal de lectura literaria */
+        /* Modal de lectura literaria (Estilo Carta Antigua) */
         .modal-phrase {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 1, 1, 0.92);
+            background: rgba(5, 3, 2, 0.85);
             display: flex; justify-content: center; align-items: center;
             z-index: 100;
             opacity: 0; visibility: hidden;
@@ -100,18 +108,19 @@
         }
         .modal-phrase.active { opacity: 1; visibility: visible; }
         .phrase-card {
-            background: #080303;
-            border: 1px solid rgba(150, 40, 40, 0.5);
+            background: #f4ebd7;
+            background-image: radial-gradient(circle, #f9f4e8 0%, #e6d5b8 100%);
+            border: 2px solid #5a3c1e;
             padding: 45px 50px;
             border-radius: 6px;
             max-width: 680px;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(90, 60, 30, 0.15);
             position: relative;
         }
         .phrase-card h3 {
             font-family: 'Cinzel', serif;
-            color: #ff5c5c;
+            color: #7a2d10;
             font-size: 1.1rem;
             margin-bottom: 25px;
             letter-spacing: 4px;
@@ -119,14 +128,14 @@
         .phrase-card p {
             font-size: 1.4rem;
             line-height: 1.8;
-            color: #f7f0f0;
+            color: #2c1d11;
             margin-bottom: 35px;
             font-style: italic;
         }
         .phrase-card button {
-            background: transparent;
-            color: #ff6b6b;
-            border: 1px solid rgba(180, 50, 50, 0.6);
+            background: #5a3c1e;
+            color: #f4ebd7;
+            border: 1px solid #3b2613;
             padding: 12px 30px;
             border-radius: 3px;
             cursor: pointer;
@@ -136,57 +145,63 @@
             transition: all 0.4s ease;
         }
         .phrase-card button:hover {
-            background: #2b0808;
+            background: #7a2d10;
             color: #ffffff;
-            border-color: #ff4444;
-            box-shadow: 0 0 20px rgba(255, 30, 30, 0.4);
+            box-shadow: 0 0 20px rgba(122, 45, 16, 0.4);
         }
 
-        /* Notificación de balsa lista */
+        /* Modal final / Elección de Archipiélago */
         .raft-notification {
             position: fixed;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(8, 3, 3, 0.97);
-            border: 1px solid rgba(255, 60, 60, 0.8);
-            padding: 50px;
+            background: #f4ebd7;
+            background-image: radial-gradient(circle, #f9f4e8 0%, #e6d5b8 100%);
+            border: 2px solid #7a2d10;
+            padding: 45px;
             border-radius: 6px;
             text-align: center;
             z-index: 200;
             display: none;
-            box-shadow: 0 0 80px rgba(255, 20, 20, 0.3);
-            max-width: 600px;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.8);
+            max-width: 650px;
             backdrop-filter: blur(15px);
         }
         .raft-notification h2 {
             font-family: 'Cinzel', serif;
-            color: #ff4d4d;
-            font-size: 1.8rem;
+            color: #7a2d10;
+            font-size: 1.6rem;
             margin-bottom: 20px;
             letter-spacing: 3px;
         }
         .raft-notification p {
-            font-size: 1.25rem;
-            margin-bottom: 35px;
-            color: #e6dede;
+            font-size: 1.15rem;
+            margin-bottom: 25px;
+            color: #2c1d11;
             line-height: 1.7;
             font-style: italic;
         }
-        .raft-notification button {
-            background: #2b0808;
-            color: #ff6b6b;
-            border: 1px solid #ff4444;
-            padding: 14px 35px;
+        .archipelago-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .archipelago-btn {
+            background: #5a3c1e;
+            color: #f4ebd7;
+            border: 1px solid #3b2613;
+            padding: 12px 20px;
             font-family: 'Cinzel', serif;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.95rem;
             letter-spacing: 2px;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
         }
-        .raft-notification button:hover {
-            background: #521111;
-            color: #ffffff;
-            box-shadow: 0 0 25px rgba(255, 50, 50, 0.6);
+        .archipelago-btn:hover {
+            background: #7a2d10;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(122, 45, 16, 0.5);
         }
 
         /* Controles táctiles móviles */
@@ -196,33 +211,34 @@
             display: flex; gap: 15px; z-index: 10; display: none;
         }
         .touch-btn {
-            background: rgba(12, 4, 4, 0.9);
-            border: 1px solid rgba(120, 30, 30, 0.5);
-            color: #ff6b6b;
+            background: rgba(244, 235, 215, 0.9);
+            border: 1px solid rgba(90, 60, 30, 0.5);
+            color: #5a3c1e;
             width: 60px; height: 60px;
             border-radius: 50%;
             font-size: 1.2rem;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .touch-btn:active { background: rgba(80, 20, 20, 0.95); color: #fff; }
+        .touch-btn:active { background: rgba(90, 60, 30, 0.95); color: #fff; }
     </style>
 </head>
 <body>
 
     <div class="hud-header">
         <h1>GEOMETRÍA DEL DESTINO</h1>
-        <p>Isla I · El umbral del viaje</p>
+        <p>Archipiélago de Pergamino · Isla I</p>
     </div>
 
     <div class="hud-progress">
         Fragmentos descubiertos: <span id="foundCount">0</span> / <span id="totalCount">5</span><br>
-        Materiales de balsa: <span id="raftParts">0</span> / 5
+        Trazos de tinta: <span id="raftParts">0</span> / 5
     </div>
 
     <div class="desktop-instructions">
-        Usa <b>W, A, S, D</b> o <b>Flechas</b> para recorrer la isla.<br>
-        Acércate a los monolitos de piedra para revelar los fragmentos.
+        Usa <b>W, A, S, D</b> o <b>Flechas</b> para recorrer el mapa.<br>
+        Acércate a las marcas de tinta para revelar los fragmentos.
     </div>
 
     <div class="touch-controls" id="touchControls">
@@ -235,17 +251,22 @@
     <!-- Modal de frase -->
     <div class="modal-phrase" id="phraseModal">
         <div class="phrase-card">
-            <h3 id="modalTitle">MONOLITO DE LA GEOMETRÍA</h3>
+            <h3 id="modalTitle">FRAGMENTo DE PERGAMINO</h3>
             <p id="modalText">Texto...</p>
             <button id="closeModalBtn">Continuar exploración</button>
         </div>
     </div>
 
-    <!-- Modal final -->
+    <!-- Modal final con mensaje y selector de archipiélago -->
     <div class="raft-notification" id="raftModal">
-        <h2>ISLA SUPERADA</h2>
-        <p>Has desenterrado todos los fragmentos y reunido las maderas sagradas de la costa. La balsa aguarda en la orilla para zarpar hacia la siguiente etapa de la odisea.</p>
-        <button id="nextIslandBtn">Zarpar hacia el Bloque II</button>
+        <h2>TRAZADO COMPLETADO</h2>
+        <p>"Todos somos viajeros que unas veces compartimos el camino y otras nuestros destinos."</p>
+        <p style="font-size: 0.95rem; margin-bottom: 15px;">El mapa antiguo se despliega y revela nuevos horizontes de tinta. ¿A qué archipiélago deseas zarpar?</p>
+        <div class="archipelago-options">
+            <button class="archipelago-btn" onclick="travelTo('arquitectura')">Bloque II: Arquitectura del Alma</button>
+            <button class="archipelago-btn" onclick="travelTo('soledad')">Bloque III: La soledad que habla</button>
+            <button class="archipelago-btn" onclick="travelTo('estelar')">Bloque IV: Odisea Estelar</button>
+        </div>
     </div>
 
     <div id="canvas-container"></div>
@@ -266,6 +287,7 @@
         let monoliths = [];
         let discoveredCount = 0;
         let activeMonolith = null;
+        let twinkleStars = [];
 
         if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             document.getElementById('touchControls').style.display = 'flex';
@@ -276,8 +298,8 @@
             const container = document.getElementById('canvas-container');
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x020101);
-            scene.fog = new THREE.FogExp2(0x080202, 0.022);
+            scene.background = new THREE.Color(0x050302);
+            scene.fog = new THREE.FogExp2(0x1a120b, 0.015);
 
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 1.6, 13);
@@ -289,24 +311,18 @@
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
 
-            const ambientLight = new THREE.AmbientLight(0x140606, 1.5);
+            const ambientLight = new THREE.AmbientLight(0xfff5e6, 1.2);
             scene.add(ambientLight);
 
-            const sunLight = new THREE.DirectionalLight(0xff2a2a, 2.2);
-            sunLight.position.set(25, 18, -25);
+            const sunLight = new THREE.DirectionalLight(0xffeed1, 1.8);
+            sunLight.position.set(20, 25, 20);
             sunLight.castShadow = true;
-            sunLight.shadow.mapSize.width = 2048;
-            sunLight.shadow.mapSize.height = 2048;
             scene.add(sunLight);
 
-            const fillLight = new THREE.DirectionalLight(0x401010, 1.0);
-            fillLight.position.set(-25, 10, 25);
-            scene.add(fillLight);
-
-            createOrganicIsland();
-            createOcean();
-            createAtmosphericParticles();
-            createRefinedMonoliths();
+            createParchmentIsland();
+            createTonedOcean();
+            createTwinklingSky();
+            createInkMonoliths();
 
             window.addEventListener('keydown', onKeyDown);
             window.addEventListener('keyup', onKeyUp);
@@ -316,7 +332,8 @@
             animate();
         }
 
-        function createOrganicIsland() {
+        function createParchmentIsland() {
+            // Isla con relieve estilo mapa antiguo en tonos arena/pergamino tostado
             const islandGeo = new THREE.PlaneGeometry(45, 45, 48, 48);
             islandGeo.rotateX(-Math.PI / 2);
             
@@ -326,37 +343,38 @@
                 const z = pos.getZ(i);
                 const distFromCenter = Math.sqrt(x*x + z*z);
                 
-                let y = Math.cos(distFromCenter * 0.15) * 1.2 - (distFromCenter * distFromCenter * 0.008);
+                let y = Math.cos(distFromCenter * 0.12) * 1.0 - (distFromCenter * distFromCenter * 0.007);
                 if (distFromCenter > 16) {
-                    y -= (distFromCenter - 16) * 0.4;
+                    y -= (distFromCenter - 16) * 0.5;
                 }
                 pos.setY(i, y);
             }
             islandGeo.computeVertexNormals();
 
             const islandMat = new THREE.MeshStandardMaterial({
-                color: 0x120707,
-                roughness: 0.92,
+                color: 0xd9c39e,
+                roughness: 0.85,
                 metalness: 0.05,
-                flatShading: false
+                flatShading: true // Da un aspecto estético de mapa ilustrado / maqueta de papel
             });
             const island = new THREE.Mesh(islandGeo, islandMat);
             island.position.y = -1.5;
             island.receiveShadow = true;
             scene.add(island);
 
-            for (let i = 0; i < 16; i++) {
-                const angle = (i / 16) * Math.PI * 2 + (Math.random() * 0.2);
-                const dist = 14 + Math.random() * 3.5;
-                const rockGeo = new THREE.SphereGeometry(1.2 + Math.random() * 1.5, 12, 12);
+            // Detalles de rocas costeras estilo estampa de tinta
+            for (let i = 0; i < 18; i++) {
+                const angle = (i / 18) * Math.PI * 2 + (Math.random() * 0.2);
+                const dist = 14 + Math.random() * 4;
+                const rockGeo = new THREE.DodecahedronGeometry(1.0 + Math.random() * 1.2, 0);
                 const rockMat = new THREE.MeshStandardMaterial({
-                    color: 0x180a0a,
-                    roughness: 0.85,
-                    metalness: 0.1
+                    color: 0x5a422b,
+                    roughness: 0.9,
+                    flatShading: true
                 });
                 const rock = new THREE.Mesh(rockGeo, rockMat);
                 rock.position.set(Math.cos(angle) * dist, -0.8 + Math.random() * 0.4, Math.sin(angle) * dist);
-                rock.scale.set(1 + Math.random() * 0.5, 0.6 + Math.random() * 0.6, 1 + Math.random() * 0.5);
+                rock.scale.set(1 + Math.random() * 0.6, 0.5 + Math.random() * 0.8, 1 + Math.random() * 0.6);
                 rock.rotation.set(Math.random(), Math.random(), Math.random());
                 rock.castShadow = true;
                 rock.receiveShadow = true;
@@ -364,48 +382,53 @@
             }
         }
 
-        function createOcean() {
-            const oceanGeo = new THREE.PlaneGeometry(800, 800, 32, 32);
+        function createTonedOcean() {
+            // Océano profundo simulando la tinta sepia oscura que rodea el pergamino
+            const oceanGeo = new THREE.PlaneGeometry(800, 800, 16, 16);
             const oceanMat = new THREE.MeshStandardMaterial({
-                color: 0x030101,
-                roughness: 0.1,
-                metalness: 0.9
+                color: 0x120d09,
+                roughness: 0.3,
+                metalness: 0.6
             });
             const ocean = new THREE.Mesh(oceanGeo, oceanMat);
             ocean.rotation.x = -Math.PI / 2;
-            ocean.position.y = -2.3;
+            ocean.position.y = -2.2;
             scene.add(ocean);
         }
 
-        function createAtmosphericParticles() {
-            const count = 250;
+        function createTwinklingSky() {
+            // Cielo estrellado realista con parpadeo dinámico
+            const count = 500;
             const geo = new THREE.BufferGeometry();
             const positions = [];
+            const scales = [];
 
             for (let i = 0; i < count; i++) {
-                const r = 4 + Math.random() * 22;
-                const theta = Math.random() * Math.PI * 2;
                 positions.push(
-                    Math.cos(theta) * r,
-                    Math.random() * 5 - 0.5,
-                    Math.sin(theta) * r
+                    (Math.random() - 0.5) * 400,
+                    Math.random() * 150 + 20,
+                    (Math.random() - 0.5) * 400
                 );
+                scales.push(Math.random());
             }
 
             geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            
             const mat = new THREE.PointsMaterial({
-                color: 0xff4d4d,
-                size: 0.4,
+                color: 0xfffaed,
+                size: 0.8,
                 transparent: true,
-                opacity: 0.6,
+                opacity: 0.8,
                 blending: THREE.AdditiveBlending
             });
 
-            const particles = new THREE.Points(geo, mat);
-            scene.add(particles);
+            const stars = new THREE.Points(geo, mat);
+            scene.add(stars);
+            twinkleStars.push(stars);
         }
 
-        function createRefinedMonoliths() {
+        function createInkMonoliths() {
+            // Monumentos en forma de monolitos de piedra oscura con inscripciones de tinta y luz cálida
             const radius = 9.5;
             blockPhrases.forEach((phrase, index) => {
                 const angle = (index / blockPhrases.length) * Math.PI * 2;
@@ -417,7 +440,7 @@
                 group.lookAt(0, -0.3, 0);
 
                 const baseGeo = new THREE.BoxGeometry(1.3, 0.35, 1.3);
-                const stoneMat = new THREE.MeshStandardMaterial({ color: 0x1f1010, roughness: 0.75 });
+                const stoneMat = new THREE.MeshStandardMaterial({ color: 0x3b291a, roughness: 0.8 });
                 const base = new THREE.Mesh(baseGeo, stoneMat);
                 base.position.y = 0.15;
                 base.castShadow = true;
@@ -430,12 +453,12 @@
                 group.add(estela);
 
                 const coreGeo = new THREE.BoxGeometry(0.25, 2.0, 0.06);
-                const coreMat = new THREE.MeshBasicMaterial({ color: 0xff2a2a });
+                const coreMat = new THREE.MeshBasicMaterial({ color: 0xc25321 });
                 const core = new THREE.Mesh(coreGeo, coreMat);
                 core.position.set(0, 1.65, 0.23);
                 group.add(core);
 
-                const light = new THREE.PointLight(0xff3333, 1.8, 5);
+                const light = new THREE.PointLight(0xff9e60, 1.5, 5);
                 light.position.set(0, 1.65, 0.6);
                 group.add(light);
 
@@ -466,6 +489,7 @@
         function setupTouchControls() {
             const bind = (id, start, end) => {
                 const el = document.getElementById(id);
+                if(!el) return;
                 el.addEventListener('touchstart', (e) => { e.preventDefault(); start(); });
                 el.addEventListener('touchend', (e) => { e.preventDefault(); end(); });
             };
@@ -506,7 +530,7 @@
 
         function showModal(id, text) {
             activeMonolith = true;
-            document.getElementById('modalTitle').textContent = `MONOLITO DE LA GEOMETRÍA Nº ${id}`;
+            document.getElementById('modalTitle').textContent = `FRAGMENTO DE PERGAMINO Nº ${id}`;
             document.getElementById('modalText').textContent = `"${text}"`;
             document.getElementById('phraseModal').classList.add('active');
         }
@@ -516,12 +540,17 @@
             activeMonolith = false;
         });
 
-        document.getElementById('nextIslandBtn').addEventListener('click', () => {
-            alert("¡Próximamente conectaremos la cinemática de la balsa hacia el Bloque II!");
-        });
+        function travelTo(destination) {
+            alert(`Zarpando hacia el archipiélago seleccionado: ${destination}. ¡Próximamente disponible!`);
+        }
 
         function animate() {
             requestAnimationFrame(animate);
+
+            // Efecto de parpadeo sutil en las estrellas del cielo
+            if(twinkleStars.length > 0) {
+                twinkleStars[0].material.opacity = 0.6 + Math.sin(Date.now() * 0.003) * 0.3;
+            }
 
             const speed = 0.065;
             if (moveForward) {
