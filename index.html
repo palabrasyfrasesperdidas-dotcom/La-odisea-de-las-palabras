@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bloque 1: Geometría del Destino | Archipiélago de Pergamino y Tinta</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>Bloque 1: Geometría del Destino | El Libro de las Palabras</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:ital,wght@0,400;0,600;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #050302;
+            background-color: #0c0907;
             color: #2c221e;
             font-family: 'Amiri', serif;
             overflow: hidden;
@@ -16,6 +16,7 @@
             height: 100vh;
             user-select: none;
         }
+
         #canvas-container {
             position: absolute;
             top: 0;
@@ -24,7 +25,8 @@
             height: 100%;
             z-index: 1;
         }
-        /* HUD Superior Elegante - Estilo Pergamino */
+
+        /* Interfaz HUD flotante clásica */
         .hud-header {
             position: absolute;
             top: 25px;
@@ -33,247 +35,122 @@
             z-index: 10;
             text-align: center;
             pointer-events: none;
-            background: rgba(244, 235, 215, 0.85);
+            background: rgba(244, 235, 215, 0.9);
             border: 1px solid rgba(90, 60, 30, 0.4);
-            padding: 10px 30px;
+            padding: 10px 35px;
             border-radius: 4px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px);
         }
         .hud-header h1 {
             font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #3b2613;
-            letter-spacing: 4px;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+            letter-spacing: 3px;
             font-weight: 600;
         }
         .hud-header p {
             font-size: 0.85rem;
             color: #61462a;
-            margin-top: 3px;
+            margin-top: 2px;
             letter-spacing: 2px;
             font-style: italic;
         }
 
-        /* Panel de progreso refinado */
-        .hud-progress {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            z-index: 10;
-            background: rgba(244, 235, 215, 0.9);
-            border: 1px solid rgba(90, 60, 30, 0.4);
-            padding: 14px 20px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            letter-spacing: 1px;
-            color: #3b2613;
-        }
-        .hud-progress span {
-            color: #9c3a16;
-            font-weight: bold;
-        }
-
-        /* Instrucciones de navegación */
-        .desktop-instructions {
+        .hud-instructions {
             position: absolute;
             bottom: 25px;
-            left: 25px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 10;
             background: rgba(244, 235, 215, 0.9);
             border: 1px solid rgba(90, 60, 30, 0.4);
-            padding: 14px 20px;
+            padding: 12px 25px;
             border-radius: 4px;
-            font-size: 0.85rem;
-            color: #4a3421;
-            backdrop-filter: blur(8px);
-            line-height: 1.5;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* Modal de lectura literaria (Estilo Carta Antigua) */
-        .modal-phrase {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 3, 2, 0.85);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 100;
-            opacity: 0; visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-        .modal-phrase.active { opacity: 1; visibility: visible; }
-        .phrase-card {
-            background: #f4ebd7;
-            background-image: radial-gradient(circle, #f9f4e8 0%, #e6d5b8 100%);
-            border: 2px solid #5a3c1e;
-            padding: 45px 50px;
-            border-radius: 6px;
-            max-width: 680px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(90, 60, 30, 0.15);
-            position: relative;
-        }
-        .phrase-card h3 {
-            font-family: 'Cinzel', serif;
-            color: #7a2d10;
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-            letter-spacing: 4px;
-        }
-        .phrase-card p {
-            font-size: 1.4rem;
-            line-height: 1.8;
-            color: #2c1d11;
-            margin-bottom: 35px;
-            font-style: italic;
-        }
-        .phrase-card button {
-            background: #5a3c1e;
-            color: #f4ebd7;
-            border: 1px solid #3b2613;
-            padding: 12px 30px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-family: 'Cinzel', serif;
             font-size: 0.9rem;
-            letter-spacing: 2px;
-            transition: all 0.4s ease;
-        }
-        .phrase-card button:hover {
-            background: #7a2d10;
-            color: #ffffff;
-            box-shadow: 0 0 20px rgba(122, 45, 16, 0.4);
+            color: #4a3421;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            text-align: center;
+            letter-spacing: 1px;
         }
 
-        /* Modal final / Elección de Archipiélago */
-        .raft-notification {
-            position: fixed;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #f4ebd7;
-            background-image: radial-gradient(circle, #f9f4e8 0%, #e6d5b8 100%);
-            border: 2px solid #7a2d10;
-            padding: 45px;
-            border-radius: 6px;
-            text-align: center;
-            z-index: 200;
-            display: none;
-            box-shadow: 0 0 80px rgba(0, 0, 0, 0.8);
-            max-width: 650px;
-            backdrop-filter: blur(15px);
-        }
-        .raft-notification h2 {
-            font-family: 'Cinzel', serif;
-            color: #7a2d10;
-            font-size: 1.6rem;
-            margin-bottom: 20px;
-            letter-spacing: 3px;
-        }
-        .raft-notification p {
-            font-size: 1.15rem;
-            margin-bottom: 25px;
-            color: #2c1d11;
-            line-height: 1.7;
-            font-style: italic;
-        }
-        .archipelago-options {
+        /* Controles de página discretos y elegantes */
+        .page-nav {
+            position: absolute;
+            bottom: 25px;
+            right: 30px;
+            z-index: 10;
             display: flex;
-            flex-direction: column;
             gap: 12px;
-            margin-top: 20px;
         }
-        .archipelago-btn {
-            background: #5a3c1e;
-            color: #f4ebd7;
-            border: 1px solid #3b2613;
-            padding: 12px 20px;
+        .nav-btn {
+            background: #f4ebd7;
+            border: 1px solid #5a3c1e;
+            color: #3b2613;
+            padding: 10px 20px;
             font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 0.95rem;
-            letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
         }
-        .archipelago-btn:hover {
+        .nav-btn:hover:not(:disabled) {
             background: #7a2d10;
-            color: #fff;
+            color: #f4ebd7;
+            border-color: #3b2613;
             box-shadow: 0 0 15px rgba(122, 45, 16, 0.5);
         }
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
 
-        /* Controles táctiles móviles */
-        .touch-controls {
-            position: absolute; bottom: 25px; left: 50%;
-            transform: translateX(-50%);
-            display: flex; gap: 15px; z-index: 10; display: none;
-        }
-        .touch-btn {
+        .page-indicator {
+            position: absolute;
+            bottom: 25px;
+            left: 30px;
+            z-index: 10;
             background: rgba(244, 235, 215, 0.9);
-            border: 1px solid rgba(90, 60, 30, 0.5);
-            color: #5a3c1e;
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; backdrop-filter: blur(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(90, 60, 30, 0.4);
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: #3b2613;
+            letter-spacing: 2px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
         }
-        .touch-btn:active { background: rgba(90, 60, 30, 0.95); color: #fff; }
     </style>
 </head>
 <body>
 
     <div class="hud-header">
         <h1>GEOMETRÍA DEL DESTINO</h1>
-        <p>Archipiélago de Pergamino · Isla I</p>
+        <p>Bloque I · El Manuscrito de Tinta y Pergamino</p>
     </div>
 
-    <div class="hud-progress">
-        Fragmentos descubiertos: <span id="foundCount">0</span> / <span id="totalCount">5</span><br>
-        Trazos de tinta: <span id="raftParts">0</span> / 5
+    <div class="hud-instructions">
+        Usa los botones inferiores o arrastra las esquinas de las páginas para pasar el folio.
     </div>
 
-    <div class="desktop-instructions">
-        Usa <b>W, A, S, D</b> o <b>Flechas</b> para recorrer el mapa.<br>
-        Acércate a las marcas de tinta para revelar los fragmentos.
+    <div class="page-indicator">
+        Página <span id="currentPageNum">1</span> de <span id="totalPageNum">5</span>
     </div>
 
-    <div class="touch-controls" id="touchControls">
-        <div class="touch-btn" id="btnForward">▲</div>
-        <div class="touch-btn" id="btnLeft">◀</div>
-        <div class="touch-btn" id="btnRight">▶</div>
-        <div class="touch-btn" id="btnBackward">▼</div>
-    </div>
-
-    <!-- Modal de frase -->
-    <div class="modal-phrase" id="phraseModal">
-        <div class="phrase-card">
-            <h3 id="modalTitle">FRAGMENTo DE PERGAMINO</h3>
-            <p id="modalText">Texto...</p>
-            <button id="closeModalBtn">Continuar exploración</button>
-        </div>
-    </div>
-
-    <!-- Modal final con mensaje y selector de archipiélago -->
-    <div class="raft-notification" id="raftModal">
-        <h2>TRAZADO COMPLETADO</h2>
-        <p>"Todos somos viajeros que unas veces compartimos el camino y otras nuestros destinos."</p>
-        <p style="font-size: 0.95rem; margin-bottom: 15px;">El mapa antiguo se despliega y revela nuevos horizontes de tinta. ¿A qué archipiélago deseas zarpar?</p>
-        <div class="archipelago-options">
-            <button class="archipelago-btn" onclick="travelTo('arquitectura')">Bloque II: Arquitectura del Alma</button>
-            <button class="archipelago-btn" onclick="travelTo('soledad')">Bloque III: La soledad que habla</button>
-            <button class="archipelago-btn" onclick="travelTo('estelar')">Bloque IV: Odisea Estelar</button>
-        </div>
+    <div class="page-nav">
+        <button class="nav-btn" id="prevBtn" onclick="prevPage()">Anterior</button>
+        <button class="nav-btn" id="nextBtn" onclick="nextPage()">Siguiente</button>
     </div>
 
     <div id="canvas-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        const blockPhrases = [
+        const phrases = [
             { id: 1, text: "El destino no se cruza en nuestro camino; se dibuja con cada silencio que decidimos no romper." },
             { id: 2, text: "Toda geometría es un intento del alma por ordenar el caos que habita en las estrellas." },
             { id: 3, text: "Hay líneas invisibles que atan nuestros pasos a promesas que nunca llegamos a pronunciar." },
@@ -282,27 +159,22 @@
         ];
 
         let scene, camera, renderer;
-        let player = { angle: 0 };
-        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
-        let monoliths = [];
-        let discoveredCount = 0;
-        let activeMonolith = null;
-        let twinkleStars = [];
+        let bookGroup;
+        let currentPage = 0;
+        let pages = [];
+        let isDragging = false;
+        let dragProgress = 0;
+        let targetProgress = 0;
 
-        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-            document.getElementById('touchControls').style.display = 'flex';
-        }
-        document.getElementById('totalCount').textContent = blockPhrases.length;
-
-        function init3D() {
+        function init() {
             const container = document.getElementById('canvas-container');
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x050302);
-            scene.fog = new THREE.FogExp2(0x1a120b, 0.015);
+            scene.background = new THREE.Color(0x0c0907);
 
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 1.6, 13);
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 4.5, 9.5);
+            camera.lookAt(0, 0, 0);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -311,192 +183,222 @@
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
 
-            const ambientLight = new THREE.AmbientLight(0xfff5e6, 1.2);
+            // Iluminación cálida de estudio / vela
+            const ambientLight = new THREE.AmbientLight(0xfff3e0, 1.0);
             scene.add(ambientLight);
 
-            const sunLight = new THREE.DirectionalLight(0xffeed1, 1.8);
-            sunLight.position.set(20, 25, 20);
-            sunLight.castShadow = true;
-            scene.add(sunLight);
+            const deskLight = new THREE.DirectionalLight(0xffeed1, 1.4);
+            deskLight.position.set(5, 10, 5);
+            deskLight.castShadow = true;
+            deskLight.shadow.mapSize.width = 2048;
+            deskLight.shadow.mapSize.height = 2048;
+            scene.add(deskLight);
 
-            createParchmentIsland();
-            createTonedOcean();
-            createTwinklingSky();
-            createInkMonoliths();
+            const subtleRim = new THREE.PointLight(0xd99b6c, 0.8, 10);
+            subtleRim.position.set(-4, 3, -2);
+            scene.add(subtleRim);
 
-            window.addEventListener('keydown', onKeyDown);
-            window.addEventListener('keyup', onKeyUp);
+            createDeskSurface();
+            createBook();
+
             window.addEventListener('resize', onWindowResize);
-            setupTouchControls();
+            setupInteractions();
 
             animate();
         }
 
-        function createParchmentIsland() {
-            // Isla con relieve estilo mapa antiguo en tonos arena/pergamino tostado
-            const islandGeo = new THREE.PlaneGeometry(45, 45, 48, 48);
-            islandGeo.rotateX(-Math.PI / 2);
+        function createDeskSurface() {
+            // Mesa de madera oscura antigua
+            const deskGeo = new THREE.PlaneGeometry(30, 30);
+            const deskMat = new THREE.MeshStandardMaterial({
+                color: 0x1f140c,
+                roughness: 0.7,
+                metalness: 0.1
+            });
+            const desk = new THREE.Mesh(deskGeo, deskMat);
+            desk.rotation.x = -Math.PI / 2;
+            desk.position.y = -1.2;
+            desk.receiveShadow = true;
+            scene.add(desk);
+        }
+
+        function createTextTexture(text, pageNum) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1400;
+            const ctx = canvas.getContext('2d');
+
+            // Fondo pergamino envejecido texturizado
+            ctx.fillStyle = '#f4ebd7';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Sutil viñeta o textura de bordes tostados en el papel
+            const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 400, canvas.width/2, canvas.height/2, 800);
+            grad.addColorStop(0, 'rgba(244, 235, 215, 0)');
+            grad.addColorStop(1, 'rgba(110, 80, 50, 0.25)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Márgenes del manuscrito
+            ctx.strokeStyle = 'rgba(90, 60, 30, 0.35);';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
+
+            // Título / Cabecera de página
+            ctx.fillStyle = '#7a2d10';
+            ctx.font = 'bold 36px "Cinzel", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`FRAGMENTO Nº ${pageNum}`, canvas.width / 2, 180);
+
+            // Línea separadora decorativa
+            ctx.strokeStyle = '#7a2d10';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 100, 220);
+            ctx.lineTo(canvas.width / 2 + 100, 220);
+            ctx.stroke();
+
+            // Cuerpo de texto (frase literaria centrada y poética)
+            ctx.fillStyle = '#2c1d11';
+            ctx.font.style = 'italic';
+            ctx.font = 'italic 52px "Amiri", serif';
+            ctx.textAlign = 'center';
             
-            const pos = islandGeo.attributes.position;
-            for (let i = 0; i < pos.count; i++) {
-                const x = pos.getX(i);
-                const z = pos.getZ(i);
-                const distFromCenter = Math.sqrt(x*x + z*z);
-                
-                let y = Math.cos(distFromCenter * 0.12) * 1.0 - (distFromCenter * distFromCenter * 0.007);
-                if (distFromCenter > 16) {
-                    y -= (distFromCenter - 16) * 0.5;
+            // Función de salto de línea automático (Word Wrap)
+            const words = text.split(' ');
+            let line = '';
+            let lines = [];
+            let maxWidth = canvas.width - 240;
+
+            for (let i = 0; i < words.length; i++) {
+                let testLine = line + words[i] + ' ';
+                let metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && i > 0) {
+                    lines.push(line);
+                    line = words[i] + ' ';
+                } else {
+                    line = testLine;
                 }
-                pos.setY(i, y);
             }
-            islandGeo.computeVertexNormals();
+            lines.push(line);
 
-            const islandMat = new THREE.MeshStandardMaterial({
-                color: 0xd9c39e,
+            let startY = 550 - (lines.length * 35);
+            for (let j = 0; j < lines.length; j++) {
+                ctx.fillText(lines[j], canvas.width / 2, startY + (j * 85));
+            }
+
+            // Número de página inferior
+            ctx.font = '32px "Cinzel", serif';
+            ctx.fillStyle = '#5a3c1e';
+            ctx.fillText(`— ${pageNum} —`, canvas.width / 2, canvas.height - 120);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.generateMipmaps = true;
+            return texture;
+        }
+
+        function createBook() {
+            bookGroup = new THREE.Group();
+
+            // Lomo y contraportada de cuero oscuro
+            const coverGeo = new THREE.BoxGeometry(7.2, 5.2, 0.35);
+            const coverMat = new THREE.MeshStandardMaterial({
+                color: 0x3b2213,
                 roughness: 0.85,
-                metalness: 0.05,
-                flatShading: true // Da un aspecto estético de mapa ilustrado / maqueta de papel
+                metalness: 0.1
             });
-            const island = new THREE.Mesh(islandGeo, islandMat);
-            island.position.y = -1.5;
-            island.receiveShadow = true;
-            scene.add(island);
+            const cover = new THREE.Mesh(coverGeo, coverMat);
+            cover.position.z = -0.15;
+            cover.castShadow = true;
+            cover.receiveShadow = true;
+            bookGroup.add(cover);
 
-            // Detalles de rocas costeras estilo estampa de tinta
-            for (let i = 0; i < 18; i++) {
-                const angle = (i / 18) * Math.PI * 2 + (Math.random() * 0.2);
-                const dist = 14 + Math.random() * 4;
-                const rockGeo = new THREE.DodecahedronGeometry(1.0 + Math.random() * 1.2, 0);
-                const rockMat = new THREE.MeshStandardMaterial({
-                    color: 0x5a422b,
-                    roughness: 0.9,
-                    flatShading: true
+            // Páginas interiores simuladas con volumen
+            const blockGeo = new THREE.BoxGeometry(6.8, 4.8, 0.25);
+            const blockMat = new THREE.MeshStandardMaterial({
+                color: 0xe8dec7,
+                roughness: 0.9
+            });
+            const pagesBlock = new THREE.Mesh(blockGeo, blockMat);
+            pagesBlock.position.z = 0.03;
+            pagesBlock.castShadow = true;
+            bookGroup.add(pagesBlock);
+
+            // Páginas físicas interactivas superiores
+            // Dividimos en hojas con textura para cada frase
+            phrases.forEach((phrase, index) => {
+                const pageGeo = new THREE.PlaneGeometry(3.3, 4.6, 16, 16);
+                // Ajustamos el origen de rotación al lomo (borde izquierdo de la página derecha)
+                pageGeo.translate(1.65, 0, 0);
+
+                const textureFront = createTextTexture(phrase.text, phrase.id);
+                const textureBack = createTextTexture("El eco de las palabras perdidas...", phrase.id);
+
+                const matFront = new THREE.MeshStandardMaterial({
+                    map: textureFront,
+                    roughness: 0.85,
+                    side: THREE.FrontSide
                 });
-                const rock = new THREE.Mesh(rockGeo, rockMat);
-                rock.position.set(Math.cos(angle) * dist, -0.8 + Math.random() * 0.4, Math.sin(angle) * dist);
-                rock.scale.set(1 + Math.random() * 0.6, 0.5 + Math.random() * 0.8, 1 + Math.random() * 0.6);
-                rock.rotation.set(Math.random(), Math.random(), Math.random());
-                rock.castShadow = true;
-                rock.receiveShadow = true;
-                scene.add(rock);
-            }
-        }
+                const matBack = new THREE.MeshStandardMaterial({
+                    map: textureBack,
+                    roughness: 0.85,
+                    side: THREE.BackSide
+                });
 
-        function createTonedOcean() {
-            // Océano profundo simulando la tinta sepia oscura que rodea el pergamino
-            const oceanGeo = new THREE.PlaneGeometry(800, 800, 16, 16);
-            const oceanMat = new THREE.MeshStandardMaterial({
-                color: 0x120d09,
-                roughness: 0.3,
-                metalness: 0.6
-            });
-            const ocean = new THREE.Mesh(oceanGeo, oceanMat);
-            ocean.rotation.x = -Math.PI / 2;
-            ocean.position.y = -2.2;
-            scene.add(ocean);
-        }
+                const pageMesh = new THREE.Mesh(pageGeo, [matFront, matBack]);
+                pageMesh.position.set(-1.65, 0, 0.18 + (index * 0.005));
+                pageMesh.castShadow = true;
+                pageMesh.receiveShadow = true;
 
-        function createTwinklingSky() {
-            // Cielo estrellado realista con parpadeo dinámico
-            const count = 500;
-            const geo = new THREE.BufferGeometry();
-            const positions = [];
-            const scales = [];
-
-            for (let i = 0; i < count; i++) {
-                positions.push(
-                    (Math.random() - 0.5) * 400,
-                    Math.random() * 150 + 20,
-                    (Math.random() - 0.5) * 400
-                );
-                scales.push(Math.random());
-            }
-
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            
-            const mat = new THREE.PointsMaterial({
-                color: 0xfffaed,
-                size: 0.8,
-                transparent: true,
-                opacity: 0.8,
-                blending: THREE.AdditiveBlending
+                bookGroup.add(pageMesh);
+                pages.push(pageMesh);
             });
 
-            const stars = new THREE.Points(geo, mat);
-            scene.add(stars);
-            twinkleStars.push(stars);
+            scene.add(bookGroup);
         }
 
-        function createInkMonoliths() {
-            // Monumentos en forma de monolitos de piedra oscura con inscripciones de tinta y luz cálida
-            const radius = 9.5;
-            blockPhrases.forEach((phrase, index) => {
-                const angle = (index / blockPhrases.length) * Math.PI * 2;
-                const x = Math.cos(angle) * radius;
-                const z = Math.sin(angle) * radius;
+        function setupInteractions() {
+            let startX = 0;
+            window.addEventListener('pointerdown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+            });
 
-                const group = new THREE.Group();
-                group.position.set(x, -0.3, z);
-                group.lookAt(0, -0.3, 0);
+            window.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                const delta = (e.clientX - startX) / window.innerWidth;
+                targetProgress = Math.max(0, Math.min(phrases.length - 1, currentPage - delta * 2));
+            });
 
-                const baseGeo = new THREE.BoxGeometry(1.3, 0.35, 1.3);
-                const stoneMat = new THREE.MeshStandardMaterial({ color: 0x3b291a, roughness: 0.8 });
-                const base = new THREE.Mesh(baseGeo, stoneMat);
-                base.position.y = 0.15;
-                base.castShadow = true;
-                group.add(base);
-
-                const estelaGeo = new THREE.BoxGeometry(0.85, 3.0, 0.45);
-                const estela = new THREE.Mesh(estelaGeo, stoneMat);
-                estela.position.y = 1.65;
-                estela.castShadow = true;
-                group.add(estela);
-
-                const coreGeo = new THREE.BoxGeometry(0.25, 2.0, 0.06);
-                const coreMat = new THREE.MeshBasicMaterial({ color: 0xc25321 });
-                const core = new THREE.Mesh(coreGeo, coreMat);
-                core.position.set(0, 1.65, 0.23);
-                group.add(core);
-
-                const light = new THREE.PointLight(0xff9e60, 1.5, 5);
-                light.position.set(0, 1.65, 0.6);
-                group.add(light);
-
-                group.userData = { id: phrase.id, text: phrase.text, discovered: false };
-                scene.add(group);
-                monoliths.push(group);
+            window.addEventListener('pointerup', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                currentPage = Math.round(targetProgress);
+                targetProgress = currentPage;
+                updatePageUI();
             });
         }
 
-        function onKeyDown(e) {
-            switch(e.code) {
-                case 'KeyW': case 'ArrowUp': moveForward = true; break;
-                case 'KeyS': case 'ArrowDown': moveBackward = true; break;
-                case 'KeyA': case 'ArrowLeft': moveLeft = true; break;
-                case 'KeyD': case 'ArrowRight': moveRight = true; break;
+        function nextPage() {
+            if (currentPage < phrases.length - 1) {
+                currentPage++;
+                targetProgress = currentPage;
+                updatePageUI();
             }
         }
 
-        function onKeyUp(e) {
-            switch(e.code) {
-                case 'KeyW': case 'ArrowUp': moveForward = false; break;
-                case 'KeyS': case 'ArrowDown': moveBackward = false; break;
-                case 'KeyA': case 'ArrowLeft': moveLeft = false; break;
-                case 'KeyD': case 'ArrowRight': moveRight = false; break;
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                targetProgress = currentPage;
+                updatePageUI();
             }
         }
 
-        function setupTouchControls() {
-            const bind = (id, start, end) => {
-                const el = document.getElementById(id);
-                if(!el) return;
-                el.addEventListener('touchstart', (e) => { e.preventDefault(); start(); });
-                el.addEventListener('touchend', (e) => { e.preventDefault(); end(); });
-            };
-            bind('btnForward', () => moveForward = true, () => moveForward = false);
-            bind('btnBackward', () => moveBackward = true, () => moveBackward = false);
-            bind('btnLeft', () => moveLeft = true, () => moveLeft = false);
-            bind('btnRight', () => moveRight = true, () => moveRight = false);
+        function updatePageUI() {
+            document.getElementById('currentPageNum').textContent = currentPage + 1;
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === phrases.length - 1;
         }
 
         function onWindowResize() {
@@ -505,83 +407,33 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        function checkProximity() {
-            if (activeMonolith) return;
-            const p = camera.position;
-            monoliths.forEach(m => {
-                if (!m.userData.discovered) {
-                    if (p.distanceTo(m.position) < 2.0) {
-                        m.userData.discovered = true;
-                        discoveredCount++;
-                        document.getElementById('foundCount').textContent = discoveredCount;
-                        document.getElementById('raftParts').textContent = discoveredCount;
-
-                        showModal(m.userData.id, m.userData.text);
-
-                        if (discoveredCount === blockPhrases.length) {
-                            setTimeout(() => {
-                                document.getElementById('raftModal').style.display = 'block';
-                            }, 1000);
-                        }
-                    }
-                }
-            });
-        }
-
-        function showModal(id, text) {
-            activeMonolith = true;
-            document.getElementById('modalTitle').textContent = `FRAGMENTO DE PERGAMINO Nº ${id}`;
-            document.getElementById('modalText').textContent = `"${text}"`;
-            document.getElementById('phraseModal').classList.add('active');
-        }
-
-        document.getElementById('closeModalBtn').addEventListener('click', () => {
-            document.getElementById('phraseModal').classList.remove('active');
-            activeMonolith = false;
-        });
-
-        function travelTo(destination) {
-            alert(`Zarpando hacia el archipiélago seleccionado: ${destination}. ¡Próximamente disponible!`);
-        }
-
         function animate() {
             requestAnimationFrame(animate);
 
-            // Efecto de parpadeo sutil en las estrellas del cielo
-            if(twinkleStars.length > 0) {
-                twinkleStars[0].material.opacity = 0.6 + Math.sin(Date.now() * 0.003) * 0.3;
-            }
+            // Interpolación suave (Lerp) para el paso de página físico
+            currentPage += (targetProgress - currentPage) * 0.1;
 
-            const speed = 0.065;
-            if (moveForward) {
-                camera.position.x -= Math.sin(player.angle) * speed;
-                camera.position.z -= Math.cos(player.angle) * speed;
-            }
-            if (moveBackward) {
-                camera.position.x += Math.sin(player.angle) * speed;
-                camera.position.z += Math.cos(player.angle) * speed;
-            }
-            if (moveLeft) player.angle += 0.028;
-            if (moveRight) player.angle -= 0.028;
+            pages.forEach((page, idx) => {
+                if (idx < Math.floor(currentPage)) {
+                    // Página ya pasada (doblada a la izquierda)
+                    let diff = currentPage - idx;
+                    let angle = -Math.PI * Math.min(1, diff);
+                    page.rotation.y = angle;
+                } else if (idx === Math.floor(currentPage)) {
+                    // Página actual en transición o reposo
+                    let progressFraction = currentPage - Math.floor(currentPage);
+                    let angle = -Math.PI * progressFraction;
+                    page.rotation.y = angle;
+                } else {
+                    // Páginas restantes en el lado derecho
+                    page.rotation.y = 0;
+                }
+            });
 
-            const dist = Math.sqrt(camera.position.x**2 + camera.position.z**2);
-            if (dist > 14) {
-                camera.position.x *= 0.98;
-                camera.position.z *= 0.98;
-            }
-
-            const lookTarget = new THREE.Vector3(
-                camera.position.x - Math.sin(player.angle) * 10,
-                camera.position.y,
-                camera.position.z - Math.cos(player.angle) * 10
-            );
-            camera.lookAt(lookTarget);
-
-            checkProximity();
             renderer.render(scene, camera);
         }
 
-        window.onload = init3D;
+        window.onload = init;
     </script>
 </body>
 </html>
