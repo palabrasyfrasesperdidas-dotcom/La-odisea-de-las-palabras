@@ -8,7 +8,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #120a06;
+            background-color: #0c0705;
             color: #2c221e;
             font-family: 'Amiri', serif;
             overflow: hidden;
@@ -95,55 +95,6 @@
             letter-spacing: 2px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
         }
-
-        /* Menú de Idiomas Interactivo sobre el libro abierto */
-        .interactive-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 5;
-            pointer-events: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .language-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            pointer-events: auto;
-            background: rgba(244, 235, 215, 0.96);
-            border: 2px solid #5a3c1e;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-            max-width: 440px;
-            text-align: center;
-            display: none;
-        }
-        .language-grid h3 {
-            grid-column: span 2;
-            font-family: 'Cinzel', serif;
-            color: #7a2d10;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-        }
-        .lang-btn {
-            background: #5a3c1e;
-            color: #f4ebd7;
-            border: none;
-            padding: 7px 10px;
-            font-family: 'Cinzel', serif;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .lang-btn:hover {
-            background: #7a2d10;
-            transform: scale(1.03);
-        }
     </style>
 </head>
 <body>
@@ -158,22 +109,6 @@
     <div class="page-nav">
         <button class="nav-btn" onclick="prevStep()">Cerrar / Anterior</button>
         <button class="nav-btn" onclick="nextStep()">Siguiente Página</button>
-    </div>
-
-    <div class="interactive-overlay">
-        <div class="language-grid" id="langMenu">
-            <h3>SELECCIONA TU IDIOMA</h3>
-            <button class="lang-btn" onclick="selectLanguage('es')">Español</button>
-            <button class="lang-btn" onclick="selectLanguage('en')">English</button>
-            <button class="lang-btn" onclick="selectLanguage('fr')">Français</button>
-            <button class="lang-btn" onclick="selectLanguage('de')">Deutsch</button>
-            <button class="lang-btn" onclick="selectLanguage('ru')">Русский</button>
-            <button class="lang-btn" onclick="selectLanguage('hi')">हिन्दी</button>
-            <button class="lang-btn" onclick="selectLanguage('ja')">日本語</button>
-            <button class="lang-btn" onclick="selectLanguage('pt')">Português</button>
-            <button class="lang-btn" onclick="selectLanguage('ar')">العربية</button>
-            <button class="lang-btn" onclick="selectLanguage('fa')">فارسی</button>
-        </div>
     </div>
 
     <div id="canvas-container"></div>
@@ -227,18 +162,31 @@
             ]
         };
 
-        let scene, camera, renderer, bookMesh, closedBookMesh;
-        let currentStep = 0; // 0: Cerrado, 1: Índice de idiomas, 2+: Frases aleatorias
+        const languagesList = [
+            { code: 'es', label: 'Español' },
+            { code: 'en', label: 'English' },
+            { code: 'fr', label: 'Français' },
+            { code: 'de', label: 'Deutsch' },
+            { code: 'ru', label: 'Русский' },
+            { code: 'hi', label: 'हिन्दी' },
+            { code: 'ja', label: '日本語' },
+            { code: 'pt', label: 'Português' },
+            { code: 'ar', label: 'العربية' },
+            { code: 'fa', label: 'فارسی' }
+        ];
+
+        let scene, camera, renderer, closedBookMesh, openGroup;
+        let currentStep = 0; // 0: Cerrado, 1: Índice de idiomas integrado, 2+: Frases
         let selectedLang = 'es';
         let raycaster, mouse;
+        let rightPageMaterial, leftPageMaterial;
 
         function init() {
             const container = document.getElementById('canvas-container');
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x120a06);
+            scene.background = new THREE.Color(0x0c0705);
 
-            // Cámara cenital inclinada realista (vista superior natural sobre la mesa)
             camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 11, 4.5);
             camera.lookAt(0, 0, 0);
@@ -249,11 +197,11 @@
             renderer.shadowMap.enabled = true;
             container.appendChild(renderer.domElement);
 
-            // Iluminación cálida de estudio
-            const ambient = new THREE.AmbientLight(0xfff3e0, 1.2);
+            // Iluminación cálida estilo vela / estudio
+            const ambient = new THREE.AmbientLight(0xfff3e0, 1.3);
             scene.add(ambient);
 
-            const sun = new THREE.DirectionalLight(0xffeed1, 1.4);
+            const sun = new THREE.DirectionalLight(0xffeed1, 1.5);
             sun.position.set(3, 10, 4);
             sun.castShadow = true;
             scene.add(sun);
@@ -271,11 +219,10 @@
         }
 
         function createDesk() {
-            // Mesa de madera rústica ocupando el fondo
-            const deskGeo = new THREE.PlaneGeometry(30, 30);
+            const deskGeo = new THREE.PlaneGeometry(35, 35);
             const deskMat = new THREE.MeshStandardMaterial({
-                color: 0x1f120a,
-                roughness: 0.85,
+                color: 0x160d07,
+                roughness: 0.9,
                 metalness: 0.05
             });
             const desk = new THREE.Mesh(deskGeo, deskMat);
@@ -284,144 +231,231 @@
             scene.add(desk);
         }
 
+        // Textura realista de cuero envejecido con relieve y grabado dorado
         function createCoverTexture() {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 1400;
             const ctx = canvas.getContext('2d');
 
-            // Cuero envejecido
-            ctx.fillStyle = '#2b1a10';
+            // Fondo de cuero oscuro con textura irregular de grano y desgaste
+            ctx.fillStyle = '#22140b';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Marco dorado grabado
-            ctx.strokeStyle = '#d4af37';
-            ctx.lineWidth = 12;
+            // Sutiles manchas de envejecimiento
+            for (let i = 0; i < 4000; i++) {
+                let x = Math.random() * canvas.width;
+                let y = Math.random() * canvas.height;
+                let radius = Math.random() * 2.5;
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(15, 8, 4, 0.3)' : 'rgba(55, 35, 20, 0.2)';
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Marco doble dorado con efecto repujado
+            ctx.strokeStyle = '#c5a059';
+            ctx.lineWidth = 10;
             ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
 
-            // Título
+            ctx.strokeStyle = '#8a6e34';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(76, 76, canvas.width - 152, canvas.height - 152);
+
+            // Esquinas ornamentales simuladas
+            ctx.fillStyle = '#c5a059';
+            ctx.fillRect(55, 55, 30, 30);
+            ctx.fillRect(canvas.width - 85, 55, 30, 30);
+            ctx.fillRect(55, canvas.height - 85, 30, 30);
+            ctx.fillRect(canvas.width - 85, canvas.height - 85, 30, 30);
+
+            // Título central con tipografía clásica
             ctx.fillStyle = '#f4ebd7';
-            ctx.font = 'bold 56px "Cinzel", serif';
+            ctx.font = 'bold 54px "Cinzel", serif';
             ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 10;
             ctx.fillText("PALABRAS Y", canvas.width / 2, 520);
             ctx.fillText("FRASES PERDIDAS", canvas.width / 2, 600);
 
-            ctx.font = 'italic 34px "Amiri", serif';
+            ctx.shadowBlur = 0;
+            ctx.font = 'italic 32px "Amiri", serif';
             ctx.fillStyle = '#d4af37';
-            ctx.fillText("— Manuscrito —", canvas.width / 2, 720);
+            ctx.fillText("— Manuscrito de Colección —", canvas.width / 2, 720);
 
             return new THREE.CanvasTexture(canvas);
         }
 
-        function createOpenBookTextures(title, bodyText) {
+        // Textura base de pergamino artesanal con fibras y bordes tostados
+        function createPergamentTexture(title, bodyLines, isIndex = false) {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 1400;
             const ctx = canvas.getContext('2d');
 
-            // Pergamino
+            // Color base de papel pergamino antiguo
             ctx.fillStyle = '#f4ebd7';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.strokeStyle = 'rgba(90, 60, 30, 0.3)';
+            // Fibras sutiles de papel antiguo
+            for (let i = 0; i < 2500; i++) {
+                let x = Math.random() * canvas.width;
+                let y = Math.random() * canvas.height;
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(180, 160, 130, 0.15)' : 'rgba(90, 60, 30, 0.08)';
+                ctx.fillRect(x, y, 2, 1);
+            }
+
+            // Viñeta oscura en los bordes y lomo (efecto libro real)
+            const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 350, canvas.width/2, canvas.height/2, 850);
+            grad.addColorStop(0, 'rgba(244, 235, 215, 0)');
+            grad.addColorStop(1, 'rgba(100, 70, 40, 0.35)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Marco elegante del manuscrito
+            ctx.strokeStyle = 'rgba(90, 60, 30, 0.45)';
             ctx.lineWidth = 4;
             ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
 
+            // Título de la página
             ctx.fillStyle = '#7a2d10';
-            ctx.font = 'bold 38px "Cinzel", serif';
+            ctx.font = 'bold 36px "Cinzel", serif';
             ctx.textAlign = 'center';
-            ctx.fillText(title, canvas.width / 2, 180);
+            ctx.fillText(title, canvas.width / 2, 160);
 
-            ctx.fillStyle = '#2c1d11';
-            ctx.font = 'italic 46px "Amiri", serif';
+            // Línea divisoria decorativa
+            ctx.strokeStyle = '#7a2d10';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2 - 120, 195);
+            ctx.lineTo(canvas.width / 2 + 120, 195);
+            ctx.stroke();
 
-            const words = bodyText.split(' ');
-            let line = '';
-            let lines = [];
-            let maxWidth = canvas.width - 240;
+            if (isIndex) {
+                // Dibujar botones de idioma directamente sobre la página del libro 3D
+                // (Se renderizan en el canvas para que sigan la misma inclinación del libro)
+                let startY = 260;
+                let colWidth = 380;
+                let rowHeight = 85;
 
-            for (let i = 0; i < words.length; i++) {
-                let testLine = line + words[i] + ' ';
-                if (ctx.measureText(testLine).width > maxWidth && i > 0) {
-                    lines.push(line);
-                    line = words[i] + ' ';
-                } else {
-                    line = testLine;
+                languagesList.forEach((lang, index) => {
+                    let col = index % 2;
+                    let row = Math.floor(index / 2);
+                    let x = 140 + (col * (colWidth + 40));
+                    let y = startY + (row * rowHeight);
+
+                    // Caja del botón en el pergamino
+                    ctx.fillStyle = '#5a3c1e';
+                    ctx.fillRect(x, y, colWidth, 65);
+                    ctx.strokeStyle = '#3b2213';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(x, y, colWidth, 65);
+
+                    // Texto del idioma
+                    ctx.fillStyle = '#f4ebd7';
+                    ctx.font = 'bold 28px "Cinzel", serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(lang.label.toUpperCase(), x + (colWidth / 2), y + 42);
+                });
+
+                ctx.fillStyle = '#4a3421';
+                ctx.font = 'italic 26px "Amiri", serif';
+                ctx.fillText("Haz clic en tu idioma para comenzar la lectura", canvas.width / 2, canvas.height - 100);
+
+            } else {
+                // Cuerpo de texto de la frase literaria
+                ctx.fillStyle = '#2c1d11';
+                ctx.font = 'italic 46px "Amiri", serif';
+                ctx.textAlign = 'center';
+
+                let words = bodyLines.split(' ');
+                let line = '';
+                let lines = [];
+                let maxWidth = canvas.width - 240;
+
+                for (let i = 0; i < words.length; i++) {
+                    let testLine = line + words[i] + ' ';
+                    if (ctx.measureText(testLine).width > maxWidth && i > 0) {
+                        lines.push(line);
+                        line = words[i] + ' ';
+                    } else {
+                        line = testLine;
+                    }
+                }
+                lines.push(line);
+
+                let startY = 580 - (lines.length * 35);
+                for (let j = 0; j < lines.length; j++) {
+                    ctx.fillText(lines[j], canvas.width / 2, startY + (j * 80));
                 }
             }
-            lines.push(line);
 
-            let startY = 600 - (lines.length * 30);
-            for (let j = 0; j < lines.length; j++) {
-                ctx.fillText(lines[j], canvas.width / 2, startY + (j * 80));
-            }
-
-            return new THREE.CanvasTexture(canvas);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.generateMipmaps = true;
+            return texture;
         }
 
         function createBookModels() {
-            // 1. Libro Cerrado
+            // 1. Libro Cerrado con la tapa realista de cuero envejecido
             const closedGeo = new THREE.BoxGeometry(4.8, 6.4, 0.6);
             const closedMat = new THREE.MeshStandardMaterial({
                 map: createCoverTexture(),
-                roughness: 0.7
+                roughness: 0.65,
+                metalness: 0.1
             });
             closedBookMesh = new THREE.Mesh(closedGeo, closedMat);
             closedBookMesh.rotation.x = -Math.PI / 2;
             closedBookMesh.position.set(0, 0, 0);
             scene.add(closedBookMesh);
 
-            // 2. Libro Abierto (Dos páginas desplegadas sobre la mesa)
-            const openGroup = new THREE.Group();
+            // 2. Libro Abierto (Con texturas de pergamino puro integradas en 3D)
+            openGroup = new THREE.Group();
             
-            // Lomo central simulado
+            // Lomo central
             const spineGeo = new THREE.BoxGeometry(4.8, 6.4, 0.2);
-            const spineMat = new THREE.MeshStandardMaterial({ color: 0x2b1a10, roughness: 0.8 });
+            const spineMat = new THREE.MeshStandardMaterial({ color: 0x22140b, roughness: 0.8 });
             const spine = new THREE.Mesh(spineGeo, spineMat);
             spine.rotation.x = -Math.PI / 2;
             openGroup.add(spine);
 
-            // Página Izquierda (Fija con marca decorativa)
+            // Página Izquierda (Índice de Idiomas integrado con la misma inclinación)
             const leftGeo = new THREE.PlaneGeometry(2.3, 5.8);
-            const leftMat = new THREE.MeshStandardMaterial({
-                map: createOpenBookTextures("EL MANUSCRITO", "Selecciona tu idioma en el menú flotante para comenzar el viaje."),
+            leftPageMaterial = new THREE.MeshStandardMaterial({
+                map: createPergamentTexture("SELECCIONA TU IDIOMA", "", true),
                 roughness: 0.85
             });
-            const leftPage = new THREE.Mesh(leftGeo, leftMat);
+            const leftPage = new THREE.Mesh(leftGeo, leftPageMaterial);
             leftPage.rotation.x = -Math.PI / 2;
             leftPage.position.set(-1.25, 0.02, 0);
             openGroup.add(leftPage);
 
-            // Página Derecha (Dinámica con frases aleatorias)
+            // Página Derecha (Frases aleatorias)
             const rightGeo = new THREE.PlaneGeometry(2.3, 5.8);
-            const rightMat = new THREE.MeshStandardMaterial({
-                map: createOpenBookTextures("PENSAMIENTO", "Haz clic en Siguiente para mostrar una frase aleatoria."),
+            rightPageMaterial = new THREE.MeshStandardMaterial({
+                map: createPergamentTexture("MANUSCRITO", "Pulsa 'Siguiente Página' para revelar la primera reflexión."),
                 roughness: 0.85
             });
-            window.rightPageMesh = new THREE.Mesh(rightGeo, rightMat);
+            window.rightPageMesh = new THREE.Mesh(rightGeo, rightPageMaterial);
             window.rightPageMesh.rotation.x = -Math.PI / 2;
             window.rightPageMesh.position.set(1.25, 0.02, 0);
             openGroup.add(window.rightPageMesh);
 
             openGroup.visible = false;
-            window.openBookGroup = openGroup;
             scene.add(openGroup);
         }
 
         function openBook() {
             currentStep = 1;
             closedBookMesh.visible = false;
-            window.openBookGroup.visible = true;
-            document.getElementById('langMenu').style.display = 'grid';
+            openGroup.visible = true;
             document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
-            document.getElementById('hudSubtitle').textContent = "Elige tu idioma preferido";
+            document.getElementById('hudSubtitle').textContent = "Selecciona tu idioma directamente sobre el pergamino";
         }
 
         function closeBook() {
             currentStep = 0;
             closedBookMesh.visible = true;
-            window.openBookGroup.visible = false;
-            document.getElementById('langMenu').style.display = 'none';
+            openGroup.visible = false;
             document.getElementById('pageIndicator').textContent = "Libro Cerrado";
             document.getElementById('hudSubtitle').textContent = "Haz clic sobre la portada del libro para abrirlo";
         }
@@ -430,15 +464,16 @@
             if (currentStep === 0) {
                 openBook();
             } else {
-                // Generar frase aleatoria en el idioma actual
+                // Obtener frase aleatoria del idioma seleccionado
                 const list = phrasesDB[selectedLang] || phrasesDB['es'];
                 const randomPhrase = list[Math.floor(Math.random() * list.length)];
 
-                window.rightPageMesh.material.map = createOpenBookTextures(`PENSAMIENTO (${selectedLang.toUpperCase()})`, randomPhrase);
+                window.rightPageMesh.material.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, randomPhrase, false);
                 window.rightPageMesh.material.needsUpdate = true;
 
                 currentStep++;
                 document.getElementById('pageIndicator').textContent = `Página (${currentStep - 1})`;
+                document.getElementById('hudSubtitle').textContent = "Pasa la página para descubrir una nueva frase aleatoria";
             }
         }
 
@@ -446,7 +481,6 @@
             if (currentStep > 1) {
                 currentStep--;
                 if (currentStep === 1) {
-                    document.getElementById('langMenu').style.display = 'grid';
                     document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
                 }
             } else {
@@ -454,33 +488,60 @@
             }
         }
 
+        // Detección de clics en los botones de idiomas dibujados sobre la página 3D izquierda
+        function onDocumentClick(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+
+            if (currentStep === 0) {
+                const intersects = raycaster.intersectObject(closedBookMesh);
+                if (intersects.length > 0) {
+                    openBook();
+                }
+            } else if (currentStep === 1) {
+                // Intersectar con la página izquierda para calcular qué idioma pulsó el usuario sobre el pergamino
+                const intersects = raycaster.intersectObjects(openGroup.children);
+                if (intersects.length > 0) {
+                    let uv = intersects[0].uv;
+                    if (uv) {
+                        // Mapeo de coordenadas UV de la página izquierda a la rejilla de 2 columnas x 5 filas
+                        // UV x va de 0 a 1 (mitad izquierda de la textura), y va de 0 a 1
+                        let localX = uv.x * 1024;
+                        let localY = (1.0 - uv.y) * 1400; // Invertido en Canvas
+
+                        let startY = 260;
+                        let colWidth = 380;
+                        let rowHeight = 85;
+
+                        languagesList.forEach((lang, index) => {
+                            let col = index % 2;
+                            let row = Math.floor(index / 2);
+                            let x = 140 + (col * (colWidth + 40));
+                            let y = startY + (row * rowHeight);
+
+                            if (localX >= x && localX <= x + colWidth && localY >= y && localY <= y + 65) {
+                                selectLanguage(lang.code);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
         function selectLanguage(lang) {
             selectedLang = lang;
-            document.getElementById('langMenu').style.display = 'none';
 
             const list = phrasesDB[selectedLang] || phrasesDB['es'];
             const randomPhrase = list[Math.floor(Math.random() * list.length)];
 
-            window.rightPageMesh.material.map = createOpenBookTextures(`PENSAMIENTO (${selectedLang.toUpperCase()})`, randomPhrase);
+            window.rightPageMesh.material.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, randomPhrase, false);
             window.rightPageMesh.material.needsUpdate = true;
 
             currentStep = 2;
             document.getElementById('pageIndicator').textContent = "Página (1)";
-            document.getElementById('hudSubtitle').textContent = "Pasa la página para descubrir una nueva frase aleatoria";
-        }
-
-        function onDocumentClick(event) {
-            if (currentStep === 0) {
-                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObject(closedBookMesh);
-
-                if (intersects.length > 0) {
-                    openBook();
-                }
-            }
+            document.getElementById('hudSubtitle').textContent = `Idioma seleccionado: ${selectedLang.toUpperCase()}. Pasa página para más frases.`;
         }
 
         function onWindowResize() {
