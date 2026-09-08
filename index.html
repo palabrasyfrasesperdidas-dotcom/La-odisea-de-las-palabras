@@ -143,7 +143,7 @@
             ],
             ru: [
                 "Судьба не пересекает наш путь; она рисуется каждым молчанием, которое мы решаем не нарушать.",
-                "Всякая геометрия — это попытка души упорядочить хаос, живущий в звездax."
+                "Всякая геометрия — это попытка души упорядочить хаос, живущий в звездах."
             ],
             hi: [
                 "भाग्य हमारे रास्ते को पार नहीं करता; इसे हर उस सन्नाटे से खींचा जाता है जिसे हम न तोड़ने का फैसला करते हैं।",
@@ -182,7 +182,8 @@
 
         let scene, camera, renderer;
         let bookClosed, bookOpenGroup;
-        let leftPageMat, rightPageMat, turningPageMat, turningPageMesh;
+        let leftPageMesh, rightPageMesh, turningPageMesh;
+        let leftPageMat, rightPageMat, turningPageMat;
         
         let currentState = 0; // 0: Cerrado, 1: Índice, 2+: Páginas de frases
         let selectedLang = 'es';
@@ -210,10 +211,10 @@
             renderer.shadowMap.enabled = true;
             container.appendChild(renderer.domElement);
 
-            const ambient = new THREE.AmbientLight(0xfff3e0, 1.3);
+            const ambient = new THREE.AmbientLight(0xfff3e0, 1.4);
             scene.add(ambient);
 
-            const sun = new THREE.DirectionalLight(0xffeed1, 1.5);
+            const sun = new THREE.DirectionalLight(0xffeed1, 1.6);
             sun.position.set(3, 10, 4);
             sun.castShadow = true;
             scene.add(sun);
@@ -239,7 +240,6 @@
             scene.add(desk);
         }
 
-        // Portada mejorada con títulos ligeramente más grandes
         function createCoverTexture() {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
@@ -278,7 +278,6 @@
             ctx.lineWidth = 6;
             ctx.stroke();
 
-            // Títulos con tamaño ligeramente superior
             ctx.fillStyle = '#f4ebd7';
             ctx.font = 'bold 50px "Cinzel", serif';
             ctx.textAlign = 'center';
@@ -292,10 +291,12 @@
             ctx.fillStyle = '#d4af37';
             ctx.fillText("La odisea de las palabras", canvas.width / 2, 760);
 
-            return new THREE.CanvasTexture(canvas);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.generateMipmaps = false;
+            texture.minFilter = THREE.LinearFilter;
+            return texture;
         }
 
-        // Textura de páginas estilo pergamino antiguo limpio y legible
         function createPergamentTexture(title, bodyText, isIndex = false) {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
@@ -308,17 +309,17 @@
             for (let i = 0; i < 2000; i++) {
                 let x = Math.random() * canvas.width;
                 let y = Math.random() * canvas.height;
-                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(190, 170, 140, 0.2)' : 'rgba(110, 80, 45, 0.08)';
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(190, 170, 140, 0.25)' : 'rgba(110, 80, 45, 0.1)';
                 ctx.fillRect(x, y, 2, 1);
             }
 
             const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 350, canvas.width/2, canvas.height/2, 850);
             grad.addColorStop(0, 'rgba(242, 235, 217, 0)');
-            grad.addColorStop(1, 'rgba(110, 80, 45, 0.3)');
+            grad.addColorStop(1, 'rgba(110, 80, 45, 0.35)');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.strokeStyle = 'rgba(90, 60, 30, 0.45)';
+            ctx.strokeStyle = 'rgba(90, 60, 30, 0.5)';
             ctx.lineWidth = 4;
             ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
 
@@ -345,9 +346,9 @@
                     let x = 140 + (col * (colWidth + 40));
                     let y = startY + (row * rowHeight);
 
-                    ctx.fillStyle = '#4a6b52'; // Tono verde pergamino suave y elegante
+                    ctx.fillStyle = '#3e5c46'; // Tono verde pergamino elegante y visible
                     ctx.fillRect(x, y, colWidth, 60);
-                    ctx.strokeStyle = '#2c4030';
+                    ctx.strokeStyle = '#223327';
                     ctx.lineWidth = 3;
                     ctx.strokeRect(x, y, colWidth, 60);
 
@@ -387,7 +388,10 @@
                 }
             }
 
-            return new THREE.CanvasTexture(canvas);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.generateMipmaps = false;
+            texture.minFilter = THREE.LinearFilter;
+            return texture;
         }
 
         function createBook() {
@@ -406,17 +410,18 @@
             bookOpenGroup.add(spine);
 
             const pageGeo = new THREE.PlaneGeometry(2.35, 5.8);
+            
             leftPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("SELECCIONA TU IDIOMA", "", true), roughness: 0.85 });
-            const leftPage = new THREE.Mesh(pageGeo, leftPageMat);
-            leftPage.rotation.x = -Math.PI / 2;
-            leftPage.position.set(-1.22, 0.02, 0);
-            bookOpenGroup.add(leftPage);
+            leftPageMesh = new THREE.Mesh(pageGeo, leftPageMat);
+            leftPageMesh.rotation.x = -Math.PI / 2;
+            leftPageMesh.position.set(-1.22, 0.02, 0);
+            bookOpenGroup.add(leftPageMesh);
 
             rightPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("MANUSCRITO", "Selecciona un idioma en la página izquierda."), roughness: 0.85 });
-            const rightPage = new THREE.Mesh(pageGeo, rightPageMat);
-            rightPage.rotation.x = -Math.PI / 2;
-            rightPage.position.set(1.22, 0.02, 0);
-            bookOpenGroup.add(rightPage);
+            rightPageMesh = new THREE.Mesh(pageGeo, rightPageMat);
+            rightPageMesh.rotation.x = -Math.PI / 2;
+            rightPageMesh.position.set(1.22, 0.02, 0);
+            bookOpenGroup.add(rightPageMesh);
 
             const turningGeo = new THREE.PlaneGeometry(2.35, 5.8);
             turningGeo.translate(1.175, 0, 0);
@@ -437,9 +442,7 @@
             bookClosed.visible = false;
             bookOpenGroup.visible = true;
             
-            // Actualizar texturas explícitamente al abrir
             leftPageMat.map = createPergamentTexture("SELECCIONA TU IDIOMA", "", true);
-            leftPageMat.map.needsUpdate = true;
             leftPageMat.needsUpdate = true;
 
             document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
@@ -450,8 +453,10 @@
             if (currentState > 0) {
                 currentState = 1;
                 leftPageMat.map = createPergamentTexture("SELECCIONA TU IDIOMA", "", true);
-                leftPageMat.map.needsUpdate = true;
                 leftPageMat.needsUpdate = true;
+
+                rightPageMat.map = createPergamentTexture("MANUSCRITO", "Selecciona un idioma en la página izquierda.");
+                rightPageMat.needsUpdate = true;
 
                 document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
                 document.getElementById('hudSubtitle').textContent = "La odisea de las palabras — Selecciona tu idioma";
@@ -462,7 +467,6 @@
             if (currentState === 0) {
                 openBookAnimation();
             } else if (currentState === 1) {
-                // Si está en el índice y pulsa siguiente, selecciona español por defecto
                 selectLanguage('es');
             } else if (!isAnimating) {
                 triggerPageTurn(true);
@@ -491,7 +495,6 @@
 
             let phrase = list[currentPhraseIndex];
             turningPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, phrase);
-            turningPageMat.map.needsUpdate = true;
             turningPageMat.needsUpdate = true;
 
             turningPageMesh.visible = true;
@@ -513,7 +516,7 @@
                 const intersects = raycaster.intersectObjects(bookOpenGroup.children);
                 if (intersects.length > 0) {
                     let uv = intersects[0].uv;
-                    if (uv && intersects[0].object.position.x < 0) {
+                    if (uv && intersects[0].object === leftPageMesh) {
                         let localX = uv.x * 1024;
                         let localY = (1.0 - uv.y) * 1400;
 
@@ -543,7 +546,6 @@
             
             const list = phrasesDB[selectedLang] || phrasesDB['es'];
             rightPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, list[0]);
-            rightPageMat.map.needsUpdate = true;
             rightPageMat.needsUpdate = true;
 
             document.getElementById('pageIndicator').textContent = "Página (1)";
@@ -571,7 +573,6 @@
                     const list = phrasesDB[selectedLang] || phrasesDB['es'];
                     let phrase = list[currentPhraseIndex];
                     rightPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, phrase);
-                    rightPageMat.map.needsUpdate = true;
                     rightPageMat.needsUpdate = true;
                     
                     document.getElementById('pageIndicator').textContent = `Página (${currentPhraseIndex + 1})`;
