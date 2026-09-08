@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palabras y frases perdidas | Manuscrito Animado</title>
+    <title>Palabras y frases perdidas | La odisea de las palabras</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -101,7 +101,7 @@
 
     <div class="hud-header">
         <h1>PALABRAS Y FRASES PERDIDAS</h1>
-        <p id="hudSubtitle">Haz clic sobre la portada del libro para abrirlo con animación</p>
+        <p id="hudSubtitle">La odisea de las palabras — Haz clic sobre la portada para abrirlo</p>
     </div>
 
     <div class="page-indicator" id="pageIndicator">Libro Cerrado</div>
@@ -176,17 +176,15 @@
         ];
 
         let scene, camera, renderer;
-        let bookClosed, bookOpenGroup, turningPageMesh;
-        let leftPageMat, rightPageMat, turningPageMat;
+        let bookClosed, bookOpenGroup;
+        let leftPageMat, rightPageMat, turningPageMat, turningPageMesh;
         
         let currentState = 0; // 0: Cerrado, 1: Índice, 2+: Páginas de frases
         let selectedLang = 'es';
         
-        // Control de animación de giro de página
         let isAnimating = false;
-        let animProgress = 1; // 1 = reposo, 0 = girando
-        let targetRotation = 0;
         let currentRotation = 0;
+        let targetRotation = 0;
 
         let raycaster, mouse;
 
@@ -235,40 +233,62 @@
             scene.add(desk);
         }
 
+        // Textura basada en la imagen de referencia: Cuero envejecido verde/gris oscuro con filigranas doradas y marco central
         function createCoverTexture() {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 1400;
             const ctx = canvas.getContext('2d');
 
-            ctx.fillStyle = '#22140b';
+            // Fondo de cuero oscuro con textura
+            ctx.fillStyle = '#1c241e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            for (let i = 0; i < 4000; i++) {
+            for (let i = 0; i < 5000; i++) {
                 let x = Math.random() * canvas.width;
                 let y = Math.random() * canvas.height;
-                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(15, 8, 4, 0.3)' : 'rgba(55, 35, 20, 0.2)';
-                ctx.beginPath();
-                ctx.arc(x, y, Math.random() * 2.5, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(12, 18, 14, 0.4)' : 'rgba(45, 60, 48, 0.2)';
+                ctx.fillRect(x, y, 2, 2);
             }
 
-            ctx.strokeStyle = '#c5a059';
-            ctx.lineWidth = 10;
+            // Marcos ornamentales dorados estilo filigrana
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 8;
             ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
-            ctx.strokeStyle = '#8a6e34';
+
+            ctx.strokeStyle = '#997a25';
             ctx.lineWidth = 3;
             ctx.strokeRect(76, 76, canvas.width - 152, canvas.height - 152);
 
-            ctx.fillStyle = '#f4ebd7';
-            ctx.font = 'bold 54px "Cinzel", serif';
-            ctx.textAlign = 'center';
-            ctx.fillText("PALABRAS Y", canvas.width / 2, 520);
-            ctx.fillText("FRASES PERDIDAS", canvas.width / 2, 600);
-
-            ctx.font = 'italic 32px "Amiri", serif';
+            // Esquinas decorativas barrocas simuladas
             ctx.fillStyle = '#d4af37';
-            ctx.fillText("— Manuscrito de Colección —", canvas.width / 2, 720);
+            ctx.fillRect(55, 55, 45, 45);
+            ctx.fillRect(canvas.width - 100, 55, 45, 45);
+            ctx.fillRect(55, canvas.height - 100, 45, 45);
+            ctx.fillRect(canvas.width - 100, canvas.height - 100, 45, 45);
+
+            // Escudo / Marco central ornamental para el título
+            ctx.fillStyle = '#131915';
+            ctx.beginPath();
+            ctx.ellipse(canvas.width / 2, 560, 320, 130, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            // Títulos solicitados
+            ctx.fillStyle = '#f4ebd7';
+            ctx.font = 'bold 44px "Cinzel", serif';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+            ctx.shadowBlur = 8;
+            ctx.fillText("PALABRAS Y", canvas.width / 2, 535);
+            ctx.fillText("FRASES PERDIDAS", canvas.width / 2, 595);
+
+            ctx.shadowBlur = 0;
+            ctx.font = 'italic 28px "Amiri", serif';
+            ctx.fillStyle = '#d4af37';
+            ctx.fillText("La odisea de las palabras", canvas.width / 2, 760);
 
             return new THREE.CanvasTexture(canvas);
         }
@@ -312,9 +332,9 @@
             ctx.stroke();
 
             if (isIndex) {
-                let startY = 260;
+                let startY = 250;
                 let colWidth = 380;
-                let rowHeight = 85;
+                let rowHeight = 82;
 
                 languagesList.forEach((lang, index) => {
                     let col = index % 2;
@@ -323,23 +343,23 @@
                     let y = startY + (row * rowHeight);
 
                     ctx.fillStyle = '#5a3c1e';
-                    ctx.fillRect(x, y, colWidth, 65);
+                    ctx.fillRect(x, y, colWidth, 62);
                     ctx.strokeStyle = '#3b2213';
                     ctx.lineWidth = 3;
-                    ctx.strokeRect(x, y, colWidth, 65);
+                    ctx.strokeRect(x, y, colWidth, 62);
 
                     ctx.fillStyle = '#f4ebd7';
-                    ctx.font = 'bold 28px "Cinzel", serif';
+                    ctx.font = 'bold 26px "Cinzel", serif';
                     ctx.textAlign = 'center';
-                    ctx.fillText(lang.label.toUpperCase(), x + (colWidth / 2), y + 42);
+                    ctx.fillText(lang.label.toUpperCase(), x + (colWidth / 2), y + 40);
                 });
 
                 ctx.fillStyle = '#4a3421';
-                ctx.font = 'italic 26px "Amiri", serif';
-                ctx.fillText("Haz clic en tu idioma para comenzar la lectura", canvas.width / 2, canvas.height - 100);
+                ctx.font = 'italic 24px "Amiri", serif';
+                ctx.fillText("Selecciona tu idioma preferido", canvas.width / 2, canvas.height - 100);
             } else {
                 ctx.fillStyle = '#2c1d11';
-                ctx.font = 'italic 46px "Amiri", serif';
+                ctx.font = 'italic 44px "Amiri", serif';
                 ctx.textAlign = 'center';
 
                 let words = bodyText.split(' ');
@@ -379,36 +399,36 @@
             bookOpenGroup = new THREE.Group();
 
             const spineGeo = new THREE.BoxGeometry(4.8, 6.4, 0.2);
-            const spineMat = new THREE.MeshStandardMaterial({ color: 0x22140b, roughness: 0.8 });
+            const spineMat = new THREE.MeshStandardMaterial({ color: 0x1c241e, roughness: 0.8 });
             const spine = new THREE.Mesh(spineGeo, spineMat);
             spine.rotation.x = -Math.PI / 2;
             bookOpenGroup.add(spine);
 
-            // Página Izquierda Fija
-            const pageGeo = new THREE.PlaneGeometry(2.3, 5.8);
+            // Página Izquierda Fija (Índice de Idiomas)
+            const pageGeo = new THREE.PlaneGeometry(2.35, 5.8);
             leftPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("SELECCIONA TU IDIOMA", "", true), roughness: 0.85 });
             const leftPage = new THREE.Mesh(pageGeo, leftPageMat);
             leftPage.rotation.x = -Math.PI / 2;
-            leftPage.position.set(-1.25, 0.02, 0);
+            leftPage.position.set(-1.22, 0.02, 0);
             bookOpenGroup.add(leftPage);
 
             // Página Derecha Fija
-            rightPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("MANUSCRITO", "Pulsa Siguiente para comenzar."), roughness: 0.85 });
+            rightPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("MANUSCRITO", "Selecciona un idioma para comenzar."), roughness: 0.85 });
             const rightPage = new THREE.Mesh(pageGeo, rightPageMat);
             rightPage.rotation.x = -Math.PI / 2;
-            rightPage.position.set(1.25, 0.02, 0);
+            rightPage.position.set(1.22, 0.02, 0);
             bookOpenGroup.add(rightPage);
 
-            // Hoja animada (pivotando desde el lomo x = 0)
-            const turningGeo = new THREE.PlaneGeometry(2.3, 5.8);
-            turningGeo.translate(1.15, 0, 0); // Desplazar pivote al borde izquierdo de la hoja
-            turningPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("REFLEXIÓN", "Cargando..."), roughness: 0.85, side: THREE.DoubleSide });
+            // Hoja animada (con las dimensiones y alineación exactas para evitar desajustes)
+            const turningGeo = new THREE.PlaneGeometry(2.35, 5.8);
+            turningGeo.translate(1.175, 0, 0); // Pivote exacto en el borde del lomo
+            turningPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("REFLEXIÓN", ""), roughness: 0.85, side: THREE.DoubleSide });
             
-            window.turningPageMesh = new THREE.Mesh(turningGeo, turningPageMat);
-            window.turningPageMesh.rotation.x = -Math.PI / 2;
-            window.turningPageMesh.position.set(0, 0.03, -2.9); // Posición en el lomo
-            window.turningPageMesh.visible = false;
-            bookOpenGroup.add(window.turningPageMesh);
+            turningPageMesh = new THREE.Mesh(turningGeo, turningPageMat);
+            turningPageMesh.rotation.x = -Math.PI / 2;
+            turningPageMesh.position.set(0, 0.03, -2.9);
+            turningPageMesh.visible = false;
+            bookOpenGroup.add(turningPageMesh);
 
             bookOpenGroup.visible = false;
             scene.add(bookOpenGroup);
@@ -419,26 +439,24 @@
             bookClosed.visible = false;
             bookOpenGroup.visible = true;
             document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
-            document.getElementById('hudSubtitle').textContent = "Selecciona tu idioma en el índice";
+            document.getElementById('hudSubtitle').textContent = "La odisea de las palabras — Selecciona tu idioma";
         }
 
         function nextPage() {
             if (currentState === 0) {
                 openBookAnimation();
-            } else if (!isAnimating) {
+            } else if (!isAnimating && currentState > 1) {
                 triggerPageTurn(true);
             }
         }
 
         function prevPage() {
-            if (currentState > 1 && !isAnimating) {
+            if (currentState > 2 && !isAnimating) {
                 triggerPageTurn(false);
-            } else if (currentState === 1) {
-                bookClosed.visible = true;
-                bookOpenGroup.visible = false;
-                currentState = 0;
-                document.getElementById('pageIndicator').textContent = "Libro Cerrado";
-                document.getElementById('hudSubtitle').textContent = "Haz clic sobre la portada para abrirlo";
+            } else if (currentState === 2 || currentState === 1) {
+                currentState = 1;
+                document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
+                document.getElementById('hudSubtitle').textContent = "La odisea de las palabras — Selecciona tu idioma";
             }
         }
 
@@ -446,16 +464,13 @@
             isAnimating = true;
             currentState = forward ? currentState + 1 : currentState - 1;
 
-            // Actualizar textos según avance
             const list = phrasesDB[selectedLang] || phrasesDB['es'];
             let phrase = list[(currentState - 2) % list.length];
 
             turningPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, phrase);
             turningPageMat.needsUpdate = true;
 
-            window.turningPageMesh.visible = true;
-            
-            // Animación de rotación de 0 a -PI (de derecha a izquierda)
+            turningPageMesh.visible = true;
             currentRotation = 0;
             targetRotation = -Math.PI;
         }
@@ -478,9 +493,9 @@
                         let localX = uv.x * 1024;
                         let localY = (1.0 - uv.y) * 1400;
 
-                        let startY = 260;
+                        let startY = 250;
                         let colWidth = 380;
-                        let rowHeight = 85;
+                        let rowHeight = 82;
 
                         languagesList.forEach((lang, index) => {
                             let col = index % 2;
@@ -488,7 +503,7 @@
                             let x = 140 + (col * (colWidth + 40));
                             let y = startY + (row * rowHeight);
 
-                            if (localX >= x && localX <= x + colWidth && localY >= y && localY <= y + 65) {
+                            if (localX >= x && localX <= x + colWidth && localY >= y && localY <= y + 62) {
                                 selectLanguage(lang.code);
                             }
                         });
@@ -506,7 +521,7 @@
             rightPageMat.needsUpdate = true;
 
             document.getElementById('pageIndicator').textContent = "Página (1)";
-            document.getElementById('hudSubtitle').textContent = `Idioma: ${selectedLang.toUpperCase()}. Pasa página para continuar.`;
+            document.getElementById('hudSubtitle').textContent = `Idioma: ${selectedLang.toUpperCase()} — Pasa página para continuar`;
         }
 
         function onWindowResize() {
@@ -518,23 +533,21 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Interpolación suave (lerp) para el efecto de paso de página fluido
             if (isAnimating) {
                 currentRotation += (targetRotation - currentRotation) * 0.12;
-                window.turningPageMesh.rotation.y = currentRotation;
+                turningPageMesh.rotation.y = currentRotation;
 
                 if (Math.abs(targetRotation - currentRotation) < 0.01) {
                     isAnimating = false;
-                    window.turningPageMesh.visible = false;
-                    window.turningPageMesh.rotation.y = 0;
+                    turningPageMesh.visible = false;
+                    turningPageMesh.rotation.y = 0;
                     
-                    // Actualizar página derecha fija al terminar el giro
                     const list = phrasesDB[selectedLang] || phrasesDB['es'];
                     let phrase = list[Math.abs(currentState - 2) % list.length];
                     rightPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, phrase);
                     rightPageMat.needsUpdate = true;
                     
-                    document.getElementById('pageIndicator').textContent = currentState >= 2 ? `Página (${currentState - 1})` : "Índice";
+                    document.getElementById('pageIndicator').textContent = `Página (${currentState - 1})`;
                 }
             }
 
