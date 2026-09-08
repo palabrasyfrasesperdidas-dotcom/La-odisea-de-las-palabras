@@ -94,6 +94,11 @@
             color: #3b2613;
             letter-spacing: 2px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .page-indicator:hover {
+            background: #e6dabf;
         }
     </style>
 </head>
@@ -104,7 +109,7 @@
         <p id="hudSubtitle">La odisea de las palabras — Haz clic sobre la portada para abrirlo</p>
     </div>
 
-    <div class="page-indicator" id="pageIndicator">Libro Cerrado</div>
+    <div class="page-indicator" id="pageIndicator" onclick="goToIndex()">Libro Cerrado</div>
 
     <div class="page-nav">
         <button class="nav-btn" onclick="prevPage()">Anterior</button>
@@ -138,7 +143,7 @@
             ],
             ru: [
                 "Судьба не пересекает наш путь; она рисуется каждым молчанием, которое мы решаем не нарушать.",
-                "Всякая геометрия — это попытка души упорядочить хаос, живущий в звездах."
+                "Всякая геометрия — это попытка души упорядочить хаос, живущий в звездax."
             ],
             hi: [
                 "भाग्य हमारे रास्ते को पार नहीं करता; इसे हर उस सन्नाटे से खींचा जाता है जिसे हम न तोड़ने का फैसला करते हैं।",
@@ -181,6 +186,7 @@
         
         let currentState = 0; // 0: Cerrado, 1: Índice, 2+: Páginas de frases
         let selectedLang = 'es';
+        let currentPhraseIndex = 0;
         
         let isAnimating = false;
         let currentRotation = 0;
@@ -233,14 +239,13 @@
             scene.add(desk);
         }
 
-        // Textura basada en la imagen de referencia: Cuero envejecido verde/gris oscuro con filigranas doradas y marco central
+        // Portada mejorada con títulos ligeramente más grandes
         function createCoverTexture() {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 1400;
             const ctx = canvas.getContext('2d');
 
-            // Fondo de cuero oscuro con textura
             ctx.fillStyle = '#1c241e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -251,7 +256,6 @@
                 ctx.fillRect(x, y, 2, 2);
             }
 
-            // Marcos ornamentales dorados estilo filigrana
             ctx.strokeStyle = '#d4af37';
             ctx.lineWidth = 8;
             ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
@@ -260,58 +264,57 @@
             ctx.lineWidth = 3;
             ctx.strokeRect(76, 76, canvas.width - 152, canvas.height - 152);
 
-            // Esquinas decorativas barrocas simuladas
             ctx.fillStyle = '#d4af37';
             ctx.fillRect(55, 55, 45, 45);
             ctx.fillRect(canvas.width - 100, 55, 45, 45);
             ctx.fillRect(55, canvas.height - 100, 45, 45);
             ctx.fillRect(canvas.width - 100, canvas.height - 100, 45, 45);
 
-            // Escudo / Marco central ornamental para el título
             ctx.fillStyle = '#131915';
             ctx.beginPath();
-            ctx.ellipse(canvas.width / 2, 560, 320, 130, 0, 0, Math.PI * 2);
+            ctx.ellipse(canvas.width / 2, 560, 340, 140, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.strokeStyle = '#d4af37';
             ctx.lineWidth = 6;
             ctx.stroke();
 
-            // Títulos solicitados
+            // Títulos con tamaño ligeramente superior
             ctx.fillStyle = '#f4ebd7';
-            ctx.font = 'bold 44px "Cinzel", serif';
+            ctx.font = 'bold 50px "Cinzel", serif';
             ctx.textAlign = 'center';
             ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
             ctx.shadowBlur = 8;
-            ctx.fillText("PALABRAS Y", canvas.width / 2, 535);
+            ctx.fillText("PALABRAS Y", canvas.width / 2, 530);
             ctx.fillText("FRASES PERDIDAS", canvas.width / 2, 595);
 
             ctx.shadowBlur = 0;
-            ctx.font = 'italic 28px "Amiri", serif';
+            ctx.font = 'italic 34px "Amiri", serif';
             ctx.fillStyle = '#d4af37';
             ctx.fillText("La odisea de las palabras", canvas.width / 2, 760);
 
             return new THREE.CanvasTexture(canvas);
         }
 
+        // Textura de páginas estilo pergamino antiguo limpio y legible
         function createPergamentTexture(title, bodyText, isIndex = false) {
             const canvas = document.createElement('canvas');
             canvas.width = 1024;
             canvas.height = 1400;
             const ctx = canvas.getContext('2d');
 
-            ctx.fillStyle = '#f4ebd7';
+            ctx.fillStyle = '#f2ebd9';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            for (let i = 0; i < 2500; i++) {
+            for (let i = 0; i < 2000; i++) {
                 let x = Math.random() * canvas.width;
                 let y = Math.random() * canvas.height;
-                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(180, 160, 130, 0.15)' : 'rgba(90, 60, 30, 0.08)';
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(190, 170, 140, 0.2)' : 'rgba(110, 80, 45, 0.08)';
                 ctx.fillRect(x, y, 2, 1);
             }
 
             const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 350, canvas.width/2, canvas.height/2, 850);
-            grad.addColorStop(0, 'rgba(244, 235, 215, 0)');
-            grad.addColorStop(1, 'rgba(100, 70, 40, 0.35)');
+            grad.addColorStop(0, 'rgba(242, 235, 217, 0)');
+            grad.addColorStop(1, 'rgba(110, 80, 45, 0.3)');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -332,9 +335,9 @@
             ctx.stroke();
 
             if (isIndex) {
-                let startY = 250;
+                let startY = 240;
                 let colWidth = 380;
-                let rowHeight = 82;
+                let rowHeight = 78;
 
                 languagesList.forEach((lang, index) => {
                     let col = index % 2;
@@ -342,24 +345,24 @@
                     let x = 140 + (col * (colWidth + 40));
                     let y = startY + (row * rowHeight);
 
-                    ctx.fillStyle = '#5a3c1e';
-                    ctx.fillRect(x, y, colWidth, 62);
-                    ctx.strokeStyle = '#3b2213';
+                    ctx.fillStyle = '#4a6b52'; // Tono verde pergamino suave y elegante
+                    ctx.fillRect(x, y, colWidth, 60);
+                    ctx.strokeStyle = '#2c4030';
                     ctx.lineWidth = 3;
-                    ctx.strokeRect(x, y, colWidth, 62);
+                    ctx.strokeRect(x, y, colWidth, 60);
 
                     ctx.fillStyle = '#f4ebd7';
-                    ctx.font = 'bold 26px "Cinzel", serif';
+                    ctx.font = 'bold 24px "Cinzel", serif';
                     ctx.textAlign = 'center';
-                    ctx.fillText(lang.label.toUpperCase(), x + (colWidth / 2), y + 40);
+                    ctx.fillText(lang.label.toUpperCase(), x + (colWidth / 2), y + 38);
                 });
 
-                ctx.fillStyle = '#4a3421';
+                ctx.fillStyle = '#3b2613';
                 ctx.font = 'italic 24px "Amiri", serif';
-                ctx.fillText("Selecciona tu idioma preferido", canvas.width / 2, canvas.height - 100);
+                ctx.fillText("Selecciona tu idioma en el índice", canvas.width / 2, canvas.height - 100);
             } else {
                 ctx.fillStyle = '#2c1d11';
-                ctx.font = 'italic 44px "Amiri", serif';
+                ctx.font = 'italic 42px "Amiri", serif';
                 ctx.textAlign = 'center';
 
                 let words = bodyText.split(' ');
@@ -380,7 +383,7 @@
 
                 let startY = 580 - (lines.length * 35);
                 for (let j = 0; j < lines.length; j++) {
-                    ctx.fillText(lines[j], canvas.width / 2, startY + (j * 80));
+                    ctx.fillText(lines[j], canvas.width / 2, startY + (j * 75));
                 }
             }
 
@@ -388,14 +391,12 @@
         }
 
         function createBook() {
-            // Libro Cerrado
             const closedGeo = new THREE.BoxGeometry(4.8, 6.4, 0.6);
             const closedMat = new THREE.MeshStandardMaterial({ map: createCoverTexture(), roughness: 0.65 });
             bookClosed = new THREE.Mesh(closedGeo, closedMat);
             bookClosed.rotation.x = -Math.PI / 2;
             scene.add(bookClosed);
 
-            // Grupo Libro Abierto
             bookOpenGroup = new THREE.Group();
 
             const spineGeo = new THREE.BoxGeometry(4.8, 6.4, 0.2);
@@ -404,7 +405,6 @@
             spine.rotation.x = -Math.PI / 2;
             bookOpenGroup.add(spine);
 
-            // Página Izquierda Fija (Índice de Idiomas)
             const pageGeo = new THREE.PlaneGeometry(2.35, 5.8);
             leftPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("SELECCIONA TU IDIOMA", "", true), roughness: 0.85 });
             const leftPage = new THREE.Mesh(pageGeo, leftPageMat);
@@ -412,16 +412,14 @@
             leftPage.position.set(-1.22, 0.02, 0);
             bookOpenGroup.add(leftPage);
 
-            // Página Derecha Fija
-            rightPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("MANUSCRITO", "Selecciona un idioma para comenzar."), roughness: 0.85 });
+            rightPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("MANUSCRITO", "Selecciona un idioma en la página izquierda."), roughness: 0.85 });
             const rightPage = new THREE.Mesh(pageGeo, rightPageMat);
             rightPage.rotation.x = -Math.PI / 2;
             rightPage.position.set(1.22, 0.02, 0);
             bookOpenGroup.add(rightPage);
 
-            // Hoja animada (con las dimensiones y alineación exactas para evitar desajustes)
             const turningGeo = new THREE.PlaneGeometry(2.35, 5.8);
-            turningGeo.translate(1.175, 0, 0); // Pivote exacto en el borde del lomo
+            turningGeo.translate(1.175, 0, 0);
             turningPageMat = new THREE.MeshStandardMaterial({ map: createPergamentTexture("REFLEXIÓN", ""), roughness: 0.85, side: THREE.DoubleSide });
             
             turningPageMesh = new THREE.Mesh(turningGeo, turningPageMat);
@@ -438,14 +436,35 @@
             currentState = 1;
             bookClosed.visible = false;
             bookOpenGroup.visible = true;
+            
+            // Actualizar texturas explícitamente al abrir
+            leftPageMat.map = createPergamentTexture("SELECCIONA TU IDIOMA", "", true);
+            leftPageMat.map.needsUpdate = true;
+            leftPageMat.needsUpdate = true;
+
             document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
             document.getElementById('hudSubtitle').textContent = "La odisea de las palabras — Selecciona tu idioma";
+        }
+
+        function goToIndex() {
+            if (currentState > 0) {
+                currentState = 1;
+                leftPageMat.map = createPergamentTexture("SELECCIONA TU IDIOMA", "", true);
+                leftPageMat.map.needsUpdate = true;
+                leftPageMat.needsUpdate = true;
+
+                document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
+                document.getElementById('hudSubtitle').textContent = "La odisea de las palabras — Selecciona tu idioma";
+            }
         }
 
         function nextPage() {
             if (currentState === 0) {
                 openBookAnimation();
-            } else if (!isAnimating && currentState > 1) {
+            } else if (currentState === 1) {
+                // Si está en el índice y pulsa siguiente, selecciona español por defecto
+                selectLanguage('es');
+            } else if (!isAnimating) {
                 triggerPageTurn(true);
             }
         }
@@ -454,25 +473,30 @@
             if (currentState > 2 && !isAnimating) {
                 triggerPageTurn(false);
             } else if (currentState === 2 || currentState === 1) {
-                currentState = 1;
-                document.getElementById('pageIndicator').textContent = "Índice de Idiomas";
-                document.getElementById('hudSubtitle').textContent = "La odisea de las palabras — Selecciona tu idioma";
+                goToIndex();
             }
         }
 
         function triggerPageTurn(forward) {
             isAnimating = true;
-            currentState = forward ? currentState + 1 : currentState - 1;
-
             const list = phrasesDB[selectedLang] || phrasesDB['es'];
-            let phrase = list[(currentState - 2) % list.length];
 
+            if (forward) {
+                currentPhraseIndex = (currentPhraseIndex + 1) % list.length;
+                currentState++;
+            } else {
+                currentPhraseIndex = (currentPhraseIndex - 1 + list.length) % list.length;
+                currentState--;
+            }
+
+            let phrase = list[currentPhraseIndex];
             turningPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, phrase);
+            turningPageMat.map.needsUpdate = true;
             turningPageMat.needsUpdate = true;
 
             turningPageMesh.visible = true;
             currentRotation = 0;
-            targetRotation = -Math.PI;
+            targetRotation = forward ? -Math.PI : Math.PI;
         }
 
         function onDocumentClick(event) {
@@ -493,9 +517,9 @@
                         let localX = uv.x * 1024;
                         let localY = (1.0 - uv.y) * 1400;
 
-                        let startY = 250;
+                        let startY = 240;
                         let colWidth = 380;
-                        let rowHeight = 82;
+                        let rowHeight = 78;
 
                         languagesList.forEach((lang, index) => {
                             let col = index % 2;
@@ -503,7 +527,7 @@
                             let x = 140 + (col * (colWidth + 40));
                             let y = startY + (row * rowHeight);
 
-                            if (localX >= x && localX <= x + colWidth && localY >= y && localY <= y + 62) {
+                            if (localX >= x && localX <= x + colWidth && localY >= y && localY <= y + 60) {
                                 selectLanguage(lang.code);
                             }
                         });
@@ -515,9 +539,11 @@
         function selectLanguage(lang) {
             selectedLang = lang;
             currentState = 2;
+            currentPhraseIndex = 0;
             
             const list = phrasesDB[selectedLang] || phrasesDB['es'];
             rightPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, list[0]);
+            rightPageMat.map.needsUpdate = true;
             rightPageMat.needsUpdate = true;
 
             document.getElementById('pageIndicator').textContent = "Página (1)";
@@ -543,11 +569,12 @@
                     turningPageMesh.rotation.y = 0;
                     
                     const list = phrasesDB[selectedLang] || phrasesDB['es'];
-                    let phrase = list[Math.abs(currentState - 2) % list.length];
+                    let phrase = list[currentPhraseIndex];
                     rightPageMat.map = createPergamentTexture(`REFLEXIÓN (${selectedLang.toUpperCase()})`, phrase);
+                    rightPageMat.map.needsUpdate = true;
                     rightPageMat.needsUpdate = true;
                     
-                    document.getElementById('pageIndicator').textContent = `Página (${currentState - 1})`;
+                    document.getElementById('pageIndicator').textContent = `Página (${currentPhraseIndex + 1})`;
                 }
             }
 
