@@ -54,6 +54,27 @@
             cursor: pointer;
             transition: opacity 0.5s ease;
             padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Líneas de escaneo CRT decorativas para ambiente retro */
+        #arcade-splash::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .arcade-splash-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .arcade-title-pixel {
@@ -63,6 +84,28 @@
             text-shadow: 3px 3px #d6249f, 0 0 20px rgba(255, 204, 0, 0.6);
             margin-bottom: 20px;
             line-height: 1.5;
+        }
+
+        /* Contenedor y animación para el personaje o gráfico pixelado */
+        .arcade-sprite-container {
+            margin-bottom: 20px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arcade-pixel-art {
+            width: 54px;
+            height: 54px;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 10px rgba(214, 36, 159, 0.6));
+            animation: bounceAndFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes bounceAndFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
         }
 
         .insert-coin-text {
@@ -260,9 +303,17 @@
 
     <!-- Pantalla de Inicio Estilo Arcade -->
     <div id="arcade-splash" onclick="startAdventure()">
-        <div class="arcade-title-pixel">PALABRAS Y FRASES PERDIDAS</div>
-        <div class="insert-coin-text">INSERT COIN / PRESS START</div>
-        <div class="arcade-credits">© 2026 - ARCADE EDITION</div>
+        <div class="arcade-splash-content">
+            <div class="arcade-title-pixel">PALABRAS Y FRASES PERDIDAS</div>
+            
+            <!-- Gráfico / Personaje Pixelado Animado -->
+            <div class="arcade-sprite-container">
+                <img src="pixel-character.gif" alt="Aventurero Pixel" class="arcade-pixel-art">
+            </div>
+
+            <div class="insert-coin-text">INSERT COIN / PRESS START</div>
+            <div class="arcade-credits">© 2026 - ARCADE EDITION</div>
+        </div>
     </div>
 
     <!-- Contenido Principal de la Interfaz -->
@@ -303,20 +354,34 @@
         </div>
     </div>
 
+    <!-- Reproductor de audio oculto para la música de fondo -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="arcade-theme.mp3" type="audio/mpeg">
+        Tu navegador no soporta la reproducción de audio.
+    </audio>
+
     <script>
         function startAdventure() {
             const splash = document.getElementById('arcade-splash');
             const mainContent = document.getElementById('main-content');
             const video = document.getElementById('intro-video');
+            const bgMusic = document.getElementById('bg-music');
 
             // Desvanece la pantalla de inicio
             splash.style.opacity = '0';
             setTimeout(() => {
                 splash.style.display = 'none';
                 mainContent.classList.add('active');
+                
                 // Reproduce el video de introducción al entrar
                 if (video) {
                     video.play().catch(e => console.log("Autoplay prevented:", e));
+                }
+                
+                // Reproduce la música de fondo
+                if (bgMusic) {
+                    bgMusic.volume = 0.5; // Volumen ajustado al 50%
+                    bgMusic.play().catch(e => console.log("Autoplay de audio bloqueado:", e));
                 }
             }, 500);
         }
