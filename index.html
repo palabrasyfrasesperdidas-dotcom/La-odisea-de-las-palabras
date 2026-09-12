@@ -15,7 +15,6 @@
     <title>Palabras y frases perdidas | Arcade Edition</title>
     <meta name="description" content="Pantalla de inicio interactiva estilo videojuego clásico para explorar la colección multilingüe de huellas y reflexiones literarias.">
     
-    <!-- Fuente estilo arcade / pixel art (Press Start 2P) y Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     
     <style>
@@ -38,14 +37,13 @@
             overflow-x: hidden;
         }
 
-        /* Pantalla 1: Portada Arcade / "Press Start" */
         #arcade-splash {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(8, 8, 12, 0.97);
+            background: rgba(8, 8, 12, 0.98);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -57,13 +55,12 @@
             overflow: hidden;
         }
 
-        /* Líneas de escaneo CRT decorativas */
         #arcade-splash::before {
             content: " ";
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
             background-size: 100% 4px;
             z-index: 1;
             pointer-events: none;
@@ -75,29 +72,21 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            max-width: 480px;
+            max-width: 520px;
             width: 100%;
         }
 
-        .arcade-title-pixel {
-            font-family: 'Press Start 2P', monospace;
-            font-size: 1.15rem;
-            color: #ffcc00;
-            text-shadow: 3px 3px #d6249f, 0 0 20px rgba(255, 204, 0, 0.6);
-            margin-bottom: 18px;
-            line-height: 1.6;
-        }
-
-        /* Contenedor ampliado para la ilustración central */
+        /* Contenedor principal de la imagen ocupando el espacio central absoluto */
         .arcade-image-container {
+            position: relative;
             width: 100%;
-            max-width: 340px;
+            max-width: 400px;
             aspect-ratio: 1 / 1;
-            border-radius: 12px;
+            border-radius: 14px;
             overflow: hidden;
-            border: 2px solid #555;
-            box-shadow: 0 10px 30px rgba(214, 36, 159, 0.4), 0 0 15px rgba(255, 204, 0, 0.2);
-            margin-bottom: 22px;
+            border: 3px solid #ffcc00;
+            box-shadow: 0 10px 40px rgba(214, 36, 159, 0.5), 0 0 25px rgba(255, 204, 0, 0.3);
+            margin-bottom: 25px;
             background: #000;
         }
 
@@ -107,18 +96,42 @@
             object-fit: cover;
             image-rendering: pixelated;
             display: block;
+            animation: sceneBreathing 4s ease-in-out infinite;
+        }
+
+        /* Efecto superpuesto animado simulando el parpadeo de la hoguera y la magia */
+        .arcade-image-container::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 52% 55%, rgba(255, 140, 0, 0.35) 0%, rgba(0, 255, 200, 0.15) 40%, transparent 70%);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            animation: fireFlicker 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes fireFlicker {
+            0% { opacity: 0.6; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+
+        @keyframes sceneBreathing {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.015); }
         }
 
         .press-start-text {
             font-family: 'Press Start 2P', monospace;
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #ffffff;
             animation: blink 1s infinite;
             letter-spacing: 2px;
             border: 2px dashed #ffcc00;
-            padding: 14px 24px;
+            padding: 15px 28px;
             border-radius: 8px;
-            background: rgba(255, 204, 0, 0.1);
+            background: rgba(255, 204, 0, 0.12);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
         }
 
         @keyframes blink {
@@ -127,13 +140,13 @@
         }
 
         .arcade-credits {
-            margin-top: 22px;
+            margin-top: 20px;
             font-size: 0.75rem;
-            color: #666;
+            color: #777;
             font-family: 'Press Start 2P', monospace;
         }
 
-        /* Contenido Principal (Oculto hasta pulsar) */
+        /* Contenido Principal */
         #main-content {
             opacity: 0;
             visibility: hidden;
@@ -284,9 +297,8 @@
             .instagram-icon-btn svg { width: 18px; height: 18px; }
             p.subtitle { font-size: 0.9rem; margin-bottom: 12px; }
             .intro-container { max-width: 100%; margin-bottom: 12px; }
-            .arcade-title-pixel { font-size: 0.95rem; padding: 0 10px; }
-            .press-start-text { font-size: 0.8rem; padding: 12px 18px; }
-            .arcade-image-container { max-width: 260px; }
+            .arcade-image-container { max-width: 300px; }
+            .press-start-text { font-size: 0.85rem; padding: 12px 18px; }
             .lang-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
@@ -306,9 +318,7 @@
     <!-- Pantalla de Inicio Estilo Arcade -->
     <div id="arcade-splash" onclick="startAdventure()">
         <div class="arcade-splash-content">
-            <div class="arcade-title-pixel">PALABRAS Y FRASES PERDIDAS</div>
-            
-            <!-- Imagen central ampliada con estética Save Point -->
+            <!-- Imagen central expandida con animaciones dinámicas de fuego y ambiente -->
             <div class="arcade-image-container">
                 <img src="save-point.png" alt="Save Point Near">
             </div>
@@ -318,7 +328,7 @@
         </div>
     </div>
 
-    <!-- Contenido Principal de la Interfaz -->
+    <!-- Contenido Principal -->
     <div id="main-content">
         <div class="header-container">
             <h1>Palabras y frases perdidas</h1>
@@ -356,7 +366,6 @@
         </div>
     </div>
 
-    <!-- Reproductor de audio oculto para la música de fondo -->
     <audio id="bg-music" loop preload="auto">
         <source src="arcade-theme.mp3" type="audio/mpeg">
         Tu navegador no soporta la reproducción de audio.
